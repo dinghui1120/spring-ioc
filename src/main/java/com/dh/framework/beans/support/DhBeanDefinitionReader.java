@@ -1,6 +1,8 @@
 package com.dh.framework.beans.support;
 
 
+import com.dh.framework.annotation.DhController;
+import com.dh.framework.annotation.DhService;
 import com.dh.framework.beans.config.DhBeanDefinition;
 
 import java.io.File;
@@ -96,6 +98,10 @@ public class DhBeanDefinitionReader {
                 if (beanClass.isInterface()) {
                     continue;
                 }
+                if(!(beanClass.isAnnotationPresent(DhController.class)
+                        || beanClass.isAnnotationPresent(DhService.class))){
+                    continue;
+                }
                 // 默认类名首字母小写
                 beanDefinitionList.add(doCreateBeanDefinition(toLowerFirstCase(beanClass.getSimpleName()), beanClass.getName()));
                 // 如果是接口，就用实现类
@@ -103,7 +109,7 @@ public class DhBeanDefinitionReader {
                     beanDefinitionList.add(doCreateBeanDefinition(clazz.getName(), beanClass.getName()));
                 }
             } catch (ClassNotFoundException e) {
-                System.err.println("类没找到: " + className);
+                System.err.println("封装BeanDefinition,类没找到: " + className);
             } catch (Exception e) {
                 System.err.println("封装BeanDefinition异常: " + className);
                 e.printStackTrace();

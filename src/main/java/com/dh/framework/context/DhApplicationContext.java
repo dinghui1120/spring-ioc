@@ -3,13 +3,12 @@ package com.dh.framework.context;
 
 
 import com.dh.framework.annotation.DhAutowired;
-import com.dh.framework.annotation.DhController;
-import com.dh.framework.annotation.DhService;
 import com.dh.framework.beans.DhBeanWrapper;
 import com.dh.framework.beans.config.DhBeanDefinition;
 import com.dh.framework.beans.support.DhBeanDefinitionReader;
 import com.dh.framework.beans.support.DhDefaultListableBeanFactory;
 import com.dh.framework.core.DhBeanFactory;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
@@ -61,8 +60,11 @@ public class DhApplicationContext implements DhBeanFactory {
     public Object getBean(String beanName) {
         //1、先拿到BeanDefinition配置信息
         DhBeanDefinition beanDefinition = registry.beanDefinitionMap.get(beanName);
+        if (beanDefinition == null) {
+            throw new NoSuchBeanDefinitionException(beanName);
+        }
         //2、反射实例化对象
-        Object instance = instantiateBean(beanName,beanDefinition);
+        Object instance = instantiateBean(beanName, beanDefinition);
         //3、将返回的Bean的对象封装成BeanWrapper
         DhBeanWrapper beanWrapper = new DhBeanWrapper(instance);
         //4、执行依赖注入
@@ -101,9 +103,6 @@ public class DhApplicationContext implements DhBeanFactory {
     private void populateBean(String beanName, DhBeanDefinition beanDefinition, DhBeanWrapper beanWrapper) {
         Object instance = beanWrapper.getWrapperInstance();
         Class<?> clazz = beanWrapper.getWrapperClass();
-        if(!(clazz.isAnnotationPresent(DhController.class) || clazz.isAnnotationPresent(DhService.class))){
-            return;
-        }
         //忽略字段的修饰符
         for (Field field : clazz.getDeclaredFields()) {
             if (!field.isAnnotationPresent(DhAutowired.class)) {

@@ -19,9 +19,6 @@ import java.util.Date;
 @DhService
 public class QueryService implements IQueryService {
 
-	@DhAutowired
-	private IModifyService modifyService;
-
 	/**
 	 * 查询
 	 */
@@ -30,7 +27,6 @@ public class QueryService implements IQueryService {
 		String time = sdf.format(new Date());
 		String json = "{name:\"" + name + "\",time:\"" + time + "\"}";
 		log.info("这是在业务方法中打印的：" + json);
-		modifyService.add("aa","bb");
 		return json;
 	}
 

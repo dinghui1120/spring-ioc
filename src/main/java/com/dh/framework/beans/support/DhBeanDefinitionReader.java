@@ -46,8 +46,7 @@ public class DhBeanDefinitionReader {
             }
             contextConfig.load(inputStream);
         } catch (IOException e) {
-            System.err.println("加载配置文件失败: " + e.getMessage());
-            e.printStackTrace();
+            System.err.println("加载配置文件失败,contextConfigLocation: " + contextConfigLocation + ",e:" + e);
         }
     }
 
@@ -111,8 +110,7 @@ public class DhBeanDefinitionReader {
             } catch (ClassNotFoundException e) {
                 System.err.println("封装BeanDefinition,类没找到: " + className);
             } catch (Exception e) {
-                System.err.println("封装BeanDefinition异常: " + className);
-                e.printStackTrace();
+                System.err.println("封装BeanDefinition异常,className: " + className + ",e:" + e);
             }
         }
         return beanDefinitionList;

@@ -4,7 +4,7 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 
 /**
  * @author: dh
- * @date: 2024年12月14日 20:20
+ * @date: 2024年12月14日
  **/
 public class SpringTest {
 

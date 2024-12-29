@@ -15,6 +15,8 @@ public class DhBeanDefinition {
      */
     private String beanClassName;
 
+    public boolean isSingleton(){return true;}
+
     public boolean isLazyInit() {
         return false;
     }

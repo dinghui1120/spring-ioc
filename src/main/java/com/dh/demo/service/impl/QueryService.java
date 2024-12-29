@@ -19,6 +19,9 @@ import java.util.Date;
 @DhService
 public class QueryService implements IQueryService {
 
+	@DhAutowired
+	IModifyService modifyService;
+
 	/**
 	 * 查询
 	 */

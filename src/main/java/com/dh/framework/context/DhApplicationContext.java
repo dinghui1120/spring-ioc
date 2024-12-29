@@ -1,7 +1,6 @@
 package com.dh.framework.context;
 
 
-
 import com.dh.framework.annotation.DhAutowired;
 import com.dh.framework.beans.DhBeanWrapper;
 import com.dh.framework.beans.config.DhBeanDefinition;
@@ -11,18 +10,34 @@ import com.dh.framework.core.DhBeanFactory;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 
 import java.lang.reflect.Field;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class DhApplicationContext implements DhBeanFactory {
 
     private DhDefaultListableBeanFactory registry = new DhDefaultListableBeanFactory();
 
-    //三级缓存（终极缓存）
-    private Map<String, DhBeanWrapper> factoryBeanInstanceCache = new HashMap<>();
+    /**
+     * 正在创建bean的名称
+     */
+    private Set<String> singletonsCurrentlyInCreation = new HashSet<>();
 
-    private Map<String,Object> factoryBeanObjectCache = new HashMap<>();
+    /**
+     * 一级缓存：保存成熟的Bean(IoC)
+     */
+    private Map<String, Object> singletonObjects = new ConcurrentHashMap<>();
+
+    /**
+     * 二级缓存：保存早期的Bean
+     */
+    private Map<String, Object> earlySingletonObjects = new HashMap<>();
+
+    /**
+     * 三级缓存
+     */
+    private Map<String,Object> singletonFactories = new HashMap<>();
+
+
 
     public DhApplicationContext(String... configLocations) {
         try {
@@ -45,7 +60,7 @@ public class DhApplicationContext implements DhBeanFactory {
     private void doLoadInstance() {
         for (Map.Entry<String, DhBeanDefinition> entry : registry.beanDefinitionMap.entrySet()) {
             String beanName = entry.getKey();
-            if(!entry.getValue().isLazyInit()) {
+            if(entry.getValue().isSingleton() && !entry.getValue().isLazyInit()) {
                 getBean(beanName);
             }
         }
@@ -63,15 +78,54 @@ public class DhApplicationContext implements DhBeanFactory {
         if (beanDefinition == null) {
             throw new NoSuchBeanDefinitionException(beanName);
         }
+        //先从缓存中获取Bean
+        Object singleton = getSingleton(beanName);
+        if (singleton != null) {
+            return singleton;
+        }
+        //标记bean正在创建
+        singletonsCurrentlyInCreation.add(beanName);
         //2、反射实例化对象
         Object instance = instantiateBean(beanName, beanDefinition);
         //3、将返回的Bean的对象封装成BeanWrapper
         DhBeanWrapper beanWrapper = new DhBeanWrapper(instance);
         //4、执行依赖注入
         populateBean(beanName, beanDefinition, beanWrapper);
+        // 把创建标记清空
+        singletonsCurrentlyInCreation.remove(beanName);
         //5、保存到IoC容器中
-        factoryBeanInstanceCache.put(beanName, beanWrapper);
+        addSingleton(beanName, instance);
         return beanWrapper.getWrapperInstance();
+    }
+
+    /**
+     * 从缓存中获取Bean
+     * @param beanName
+     * @return
+     */
+    private Object getSingleton(String beanName) {
+        //先去一级缓存里面拿
+        Object bean = singletonObjects.get(beanName);
+        //如果一级缓存中没有，但是又有创建标识，说明就是循环依赖
+        if (bean == null && singletonsCurrentlyInCreation.contains(beanName)) {
+            //二级缓存
+            bean = earlySingletonObjects.get(beanName);
+            //如果二级缓存也没有，从三级缓存中拿
+            if (bean == null) {
+                bean = singletonFactories.get(beanName);
+            }
+        }
+        return bean;
+    }
+
+    /**
+     * 保存到IoC容器中
+     * @param beanName
+     * @param instance
+     */
+    private void addSingleton(String beanName, Object instance) {
+        singletonObjects.put(beanName, instance);
+        singletonFactories.remove(beanName);
     }
 
     /**
@@ -86,10 +140,10 @@ public class DhApplicationContext implements DhBeanFactory {
         try {
             Class<?> clazz = Class.forName(className);
             instance = clazz.newInstance();
-            //如果是代理对象,触发AOP的逻辑
-            factoryBeanObjectCache.put(beanName, instance);
+            // 如果是代理对象,触发AOP的逻辑
+            singletonFactories.put(beanName, instance);
         }catch (Exception e){
-            e.printStackTrace();
+            System.err.println("实例化对象异常,className: " + className + ",e:" + e);
         }
         return instance;
     }
@@ -117,12 +171,7 @@ public class DhApplicationContext implements DhBeanFactory {
             //强制访问
             field.setAccessible(true);
             try {
-                //  A  --->  实例化 ---> 放入到容器 --->  属性注入 --> 把A放入到factoryBeanInstanceCache容器里面去了
-                //  B  --->  实例化 ---> 放入到容器 --->  属性注入A(完成) --> 然后把B放入到factoryBeanInstanceCache里面去了
-                if(factoryBeanInstanceCache.get(autowiredBeanName) == null){
-                    continue;
-                }
-                field.set(instance, factoryBeanInstanceCache.get(autowiredBeanName).getWrapperInstance());
+                field.set(instance, getBean(autowiredBeanName));
             } catch (IllegalAccessException e) {
                 e.printStackTrace();
             }

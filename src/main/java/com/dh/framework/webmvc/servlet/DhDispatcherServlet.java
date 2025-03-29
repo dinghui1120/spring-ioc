@@ -5,6 +5,7 @@ import com.dh.framework.annotation.DhController;
 import com.dh.framework.annotation.DhRequestMapping;
 import com.dh.framework.annotation.DhRequestParam;
 import com.dh.framework.context.DhApplicationContext;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.http.HttpServlet;
@@ -17,6 +18,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+@Slf4j
 public class DhDispatcherServlet extends HttpServlet {
 
     /**
@@ -35,7 +37,7 @@ public class DhDispatcherServlet extends HttpServlet {
         //========== MVC功能 ==========
         //5、初始化HandlerMapping
         doInitHandlerMapping();
-        System.out.println("dh framework is init.");
+        log.info("dh framework is init.");
     }
 
     @Override
@@ -145,7 +147,7 @@ public class DhDispatcherServlet extends HttpServlet {
                 // /demo/query
                 String url = ("/" + baseUrl + "/" + requestMapping.value()).replaceAll("/+","/");
                 handlerMapping.put(url, method);
-                System.out.println("Mapped : " + url + " --> " + method);
+                log.info("Mapped : " + url + " --> " + method);
             }
         }
     }

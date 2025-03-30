@@ -11,14 +11,14 @@ import com.dh.framework.annotation.DhService;
  * @author: dh
  * @date: 2024年12月01日
  **/
-@DhService("")
+@DhService()
 public class ModifyService implements IModifyService {
 
 	@DhAutowired
 	private IQueryService queryService;
 
 	/**
-	 * 增加
+	 * 新增
 	 */
 	public String add(String name, String address) {
 		return "modifyService add,name=" + name + ",address=" + address;

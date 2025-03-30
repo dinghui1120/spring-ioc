@@ -21,6 +21,7 @@ public class ModifyService implements IModifyService {
 	 * 新增
 	 */
 	public String add(String name, String address) {
+		int i = 1/0;
 		return "modifyService add,name=" + name + ",address=" + address;
 	}
 

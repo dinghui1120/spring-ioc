@@ -43,7 +43,7 @@ public class DhAdvisedSupport {
 
 
         //保存专门匹配Class的正则
-        String pointCutForClassRegex = pointCut.substring(0, pointCut.lastIndexOf("\\(") - 2);
+        String pointCutForClassRegex = pointCut.substring(0, pointCut.lastIndexOf("\\(") - 4);
         pointCutClassPattern = Pattern.compile("class " + pointCutForClassRegex.substring(pointCutForClassRegex.lastIndexOf(" ") + 1));
 
 

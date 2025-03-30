@@ -143,4 +143,8 @@ public class DhBeanDefinitionReader {
         return String.valueOf(chars);
     }
 
+    public Properties getConfig() {
+        return contextConfig;
+    }
+
 }

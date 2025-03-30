@@ -2,18 +2,27 @@ package com.dh.framework.context;
 
 
 import com.dh.framework.annotation.DhAutowired;
+import com.dh.framework.aop.DhDefaultAopProxyFactory;
+import com.dh.framework.aop.config.DhAopConfig;
+import com.dh.framework.aop.support.DhAdvisedSupport;
 import com.dh.framework.beans.DhBeanWrapper;
 import com.dh.framework.beans.config.DhBeanDefinition;
 import com.dh.framework.beans.support.DhBeanDefinitionReader;
 import com.dh.framework.beans.support.DhDefaultListableBeanFactory;
 import com.dh.framework.core.DhBeanFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 
 import java.lang.reflect.Field;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
+@Slf4j
 public class DhApplicationContext implements DhBeanFactory {
+
+    private DhBeanDefinitionReader reader;
+
+    private DhDefaultAopProxyFactory proxyFactory = new DhDefaultAopProxyFactory();
 
     private DhDefaultListableBeanFactory registry = new DhDefaultListableBeanFactory();
 
@@ -42,7 +51,7 @@ public class DhApplicationContext implements DhBeanFactory {
     public DhApplicationContext(String... configLocations) {
         try {
             //1、加载解析配置文件
-            DhBeanDefinitionReader reader = new DhBeanDefinitionReader(configLocations);
+            reader = new DhBeanDefinitionReader(configLocations);
             //2、将所有的配置信息封装成BeanDefinition
             List<DhBeanDefinition> beanDefinitions = reader.loadBeanDefinitions();
             //3、所有的配置信息缓存起来
@@ -140,10 +149,17 @@ public class DhApplicationContext implements DhBeanFactory {
         try {
             Class<?> clazz = Class.forName(className);
             instance = clazz.newInstance();
-            // 如果是代理对象,触发AOP的逻辑
+            // 加载AOP的配置文件
+            DhAdvisedSupport config = instantiationAopConfig();
+            config.setTargetClass(clazz);
+            config.setTarget(instance);
+            // 如果满足条件，直接返回Proxy对象
+            if (config.pointCutMatch()) {
+                instance = proxyFactory.createAopProxy(config).getProxy();
+            }
             singletonFactories.put(beanName, instance);
-        }catch (Exception e){
-            System.err.println("实例化对象异常,className: " + className + ",e:" + e);
+        } catch (Exception e) {
+            log.error("实例化对象异常,className: " + className + ",e:" + e);
         }
         return instance;
     }
@@ -184,6 +200,17 @@ public class DhApplicationContext implements DhBeanFactory {
 
     public String[] getBeanDefinitionNames(){
         return registry.beanDefinitionMap.keySet().toArray(new String[0]);
+    }
+
+    private DhAdvisedSupport instantiationAopConfig() {
+        DhAopConfig config = new DhAopConfig();
+        config.setPointCut(reader.getConfig().getProperty("pointCut"));
+        config.setAspectClass(reader.getConfig().getProperty("aspectClass"));
+        config.setAspectBefore(reader.getConfig().getProperty("aspectBefore"));
+        config.setAspectAfter(reader.getConfig().getProperty("aspectAfter"));
+        config.setAspectAfterThrow(reader.getConfig().getProperty("aspectAfterThrow"));
+        config.setAspectAfterThrowingName(reader.getConfig().getProperty("aspectAfterThrowingName"));
+        return new DhAdvisedSupport(config);
     }
 
 }

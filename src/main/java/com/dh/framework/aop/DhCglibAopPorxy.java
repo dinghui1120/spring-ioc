@@ -1,6 +1,7 @@
 package com.dh.framework.aop;
 
 public class DhCglibAopPorxy implements DhAopProxy {
+
     @Override
     public Object getProxy() {
         return null;
@@ -10,4 +11,5 @@ public class DhCglibAopPorxy implements DhAopProxy {
     public Object getProxy(ClassLoader classLoader) {
         return null;
     }
+
 }

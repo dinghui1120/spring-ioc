@@ -18,7 +18,7 @@ public class DhAspectJAfterThrowingAdvice extends DhAbstractAspectJAdvice implem
     public Object invoke(DhMethodInvocation mi) throws Throwable {
         try {
             return mi.proceed();
-        }catch (Throwable ex) {
+        } catch (Throwable ex) {
             invokeAdviceMethod(mi, null, ex);
             throw ex;
         }
@@ -27,4 +27,5 @@ public class DhAspectJAfterThrowingAdvice extends DhAbstractAspectJAdvice implem
     public void setThrowName(String throwName) {
         this.throwName = throwName;
     }
+
 }

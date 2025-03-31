@@ -149,11 +149,11 @@ public class DhApplicationContext implements DhBeanFactory {
         try {
             Class<?> clazz = Class.forName(className);
             instance = clazz.newInstance();
-            // 加载AOP的配置文件
+            //加载AOP配置文件
             DhAdvisedSupport config = instantiationAopConfig();
             config.setTargetClass(clazz);
             config.setTarget(instance);
-            // 如果满足条件，直接返回Proxy对象
+            //如果满足条件，直接返回Proxy对象
             if (config.pointCutMatch()) {
                 instance = proxyFactory.createAopProxy(config).getProxy();
             }
@@ -207,7 +207,7 @@ public class DhApplicationContext implements DhBeanFactory {
         config.setPointCut(reader.getConfig().getProperty("pointCut"));
         config.setAspectClass(reader.getConfig().getProperty("aspectClass"));
         config.setAspectBefore(reader.getConfig().getProperty("aspectBefore"));
-        config.setAspectAfter(reader.getConfig().getProperty("aspectAfter"));
+        config.setAspectAfterReturn(reader.getConfig().getProperty("aspectAfterReturn"));
         config.setAspectAfterThrow(reader.getConfig().getProperty("aspectAfterThrow"));
         config.setAspectAfterThrowingName(reader.getConfig().getProperty("aspectAfterThrowingName"));
         return new DhAdvisedSupport(config);

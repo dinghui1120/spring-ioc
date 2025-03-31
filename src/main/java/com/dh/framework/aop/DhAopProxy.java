@@ -5,4 +5,5 @@ public interface DhAopProxy {
     Object getProxy();
 
     Object getProxy(ClassLoader classLoader);
+
 }

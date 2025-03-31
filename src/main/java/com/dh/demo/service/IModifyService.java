@@ -20,6 +20,6 @@ public interface IModifyService {
 	/**
 	 * 删除
 	 */
-	String remove(Integer id);
+	String remove(Integer id) throws Exception;
 	
 }

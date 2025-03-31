@@ -36,7 +36,7 @@ public class ModifyService implements IModifyService {
 	/**
 	 * 删除
 	 */
-	public String remove(Integer id) {
+	public String remove(Integer id) throws Exception{
 		return "modifyService id=" + id;
 	}
 	

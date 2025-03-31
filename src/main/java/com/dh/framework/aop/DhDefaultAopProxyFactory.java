@@ -7,7 +7,7 @@ public class DhDefaultAopProxyFactory {
 
     public DhAopProxy createAopProxy(DhAdvisedSupport config) {
         Class targetClass = config.getTargetClass();
-        if(targetClass.getInterfaces().length > 0){
+        if (targetClass.getInterfaces().length > 0) {
             return new DhJdkDynamicAopProxy(config);
         }
         return new DhCglibAopPorxy();

@@ -9,7 +9,8 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.List;
 
-public class DhJdkDynamicAopProxy implements DhAopProxy,InvocationHandler {
+public class DhJdkDynamicAopProxy implements DhAopProxy, InvocationHandler {
+
     private DhAdvisedSupport advised;
 
     public DhJdkDynamicAopProxy(DhAdvisedSupport config) {
@@ -25,23 +26,13 @@ public class DhJdkDynamicAopProxy implements DhAopProxy,InvocationHandler {
         return mi.proceed();
     }
 
-//    private void invokeAdivce(GPAdvice advice) {
-//        try {
-//            advice.getAdviceMethod().invoke(advice.getAspect());
-//        } catch (IllegalAccessException e) {
-//            e.printStackTrace();
-//        } catch (InvocationTargetException e) {
-//            e.printStackTrace();
-//        }
-//    }
-
     public Object getProxy() {
         return getProxy(advised.getTargetClass().getClassLoader());
     }
 
     @Override
     public Object getProxy(ClassLoader classLoader) {
-        return Proxy.newProxyInstance(classLoader,advised.getTargetClass().getInterfaces(),this);
+        return Proxy.newProxyInstance(classLoader, advised.getTargetClass().getInterfaces(), this);
     }
 
 }

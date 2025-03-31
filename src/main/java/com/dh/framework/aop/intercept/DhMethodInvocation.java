@@ -16,20 +16,18 @@ public class DhMethodInvocation implements DhJoinPoint {
 
     protected final Method method;
 
-    protected Object[] arguments = new Object[0];
+    protected Object[] arguments;
 
     private final Class<?> targetClass;
 
-    private Map<String, Object> userAttributes = new HashMap<String, Object>();
+    private Map<String, Object> userAttributes = new HashMap<>();
 
     protected final List<?> interceptorsAndDynamicMethodMatchers;
 
     private int currentInterceptorIndex = -1;
 
-    public DhMethodInvocation(
-            Object proxy, Object target, Method method, Object[] arguments,
+    public DhMethodInvocation(Object proxy, Object target, Method method, Object[] arguments,
                 Class<?> targetClass, List<Object> interceptorsAndDynamicMethodMatchers) {
-
             this.proxy = proxy;
             this.target = target;
             this.targetClass = targetClass;
@@ -39,21 +37,16 @@ public class DhMethodInvocation implements DhJoinPoint {
             this.interceptorsAndDynamicMethodMatchers = interceptorsAndDynamicMethodMatchers;
     }
 
-    public Object proceed() throws Throwable{
-        // 为什么this.currentInterceptorIndex == this.interceptorsAndDynamicMethodMatchers.size() - 1相等
-        // currentInterceptorIndex=2
-        if (this.currentInterceptorIndex == this.interceptorsAndDynamicMethodMatchers.size() - 1) {
+    public Object proceed() throws Throwable {
+        if (currentInterceptorIndex == interceptorsAndDynamicMethodMatchers.size() - 1) {
             // 执行service中的方法
-            return this.method.invoke(target, this.arguments);
+            return method.invoke(target, arguments);
         }
-        //currentInterceptorIndex = 1
-        Object interceptorOrInterceptionAdvice =
-                this.interceptorsAndDynamicMethodMatchers.get(++this.currentInterceptorIndex);
-
+        Object interceptorOrInterceptionAdvice = interceptorsAndDynamicMethodMatchers.get(++currentInterceptorIndex);
         if (interceptorOrInterceptionAdvice instanceof DhMethodInterceptor) {
             DhMethodInterceptor mi = (DhMethodInterceptor) interceptorOrInterceptionAdvice;
             return mi.invoke(this);
-        }else {
+        } else {
             return proceed();
         }
     }
@@ -75,11 +68,12 @@ public class DhMethodInvocation implements DhJoinPoint {
 
     @Override
     public void setUserAttribute(String key, Object value) {
-        this.userAttributes.put(key,value);
+        userAttributes.put(key,value);
     }
 
     @Override
     public Object getUserAttribute(String key) {
-        return this.userAttributes.get(key);
+        return userAttributes.get(key);
     }
+
 }

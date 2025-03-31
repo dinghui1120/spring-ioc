@@ -38,7 +38,7 @@ public class DemoController {
 	}
 
 	@DhRequestMapping("remove")
-	public void remove(HttpServletResponse response, @DhRequestParam("id") Integer id) {
+	public void remove(HttpServletResponse response, @DhRequestParam("id") Integer id) throws Exception {
 		String result = modifyService.remove(id);
 		out(response, result);
 	}

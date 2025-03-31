@@ -12,14 +12,15 @@ public class LogAspect {
         log.info("Invoke Before Method,methodName:{}", joinPoint.getMethod().getName());
     }
 
-    public void after(DhJoinPoint joinPoint) {
+    public void afterReturning(DhJoinPoint joinPoint, Object result) {
         long startTime = (Long) joinPoint.getUserAttribute("startTime_" + joinPoint.getMethod().getName());
         long endTime = System.currentTimeMillis();
-        log.info("Invoke After Method,methodName:{},cost time:{}", joinPoint.getMethod().getName(), (endTime - startTime) + "ms");
+        log.info("Invoke After Returning Method,\n methodName:{},\n result:{},\n cost time:{}",
+                joinPoint.getMethod().getName(), result, (endTime - startTime) + "ms");
     }
 
     public void afterThrowing(DhJoinPoint joinPoint, Throwable ex) {
-        log.info("Invoke After Throwing,methodName:{},e:{}", joinPoint.getMethod().getName(), ex);
+        log.info("Invoke After Throwing Method,methodName:{},e:{}", joinPoint.getMethod().getName(), ex);
     }
 
 }

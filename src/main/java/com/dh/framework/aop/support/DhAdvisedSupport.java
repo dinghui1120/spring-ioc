@@ -24,7 +24,6 @@ public class DhAdvisedSupport {
     private Class targetClass;
     private Pattern pointCutClassPattern;
 
-//    private Map<Method,Map<String,GPAdvice>> methodCache;
     private Map<Method, List<Object>> methodCache;
 
     public DhAdvisedSupport(DhAopConfig config) {
@@ -33,7 +32,6 @@ public class DhAdvisedSupport {
 
     //解析配置文件的方法
     private void parse() {
-
         //把Spring的Expression变成Java能够识别的正则表达式
         String pointCut = config.getPointCut()
                 .replaceAll("\\.", "\\\\.")
@@ -41,16 +39,15 @@ public class DhAdvisedSupport {
                 .replaceAll("\\(", "\\\\(")
                 .replaceAll("\\)", "\\\\)");
 
-
-        //保存专门匹配Class的正则
+        //匹配Class的正则
+        //public .* com\.dh\.demo\.service\..*Service
         String pointCutForClassRegex = pointCut.substring(0, pointCut.lastIndexOf("\\(") - 4);
+        //class com\.dh\.demo\.service\..*Service
         pointCutClassPattern = Pattern.compile("class " + pointCutForClassRegex.substring(pointCutForClassRegex.lastIndexOf(" ") + 1));
 
-
         //享元的共享池  绑定关系
-//        methodCache = new HashMap<Method, Map<String, GPAdvice>>();
-        methodCache = new HashMap<Method, List<Object>>();
-        //保存专门匹配方法的正则
+        methodCache = new HashMap<>();
+        //匹配方法的正则
         Pattern pointCutPattern = Pattern.compile(pointCut);
         try {
             Class aspectClass = Class.forName(config.getAspectClass());
@@ -60,17 +57,17 @@ public class DhAdvisedSupport {
             }
 
             for (Method method : targetClass.getMethods()) {
+                //public java.lang.String com.dh.demo.service.impl.QueryService.query(java.lang.String)
+                //public java.lang.String com.dh.demo.service.impl.ModifyService.remove(java.lang.Integer) throws java.lang.Exception
                 String methodString = method.toString();
                 if (methodString.contains("throws")) {
                     methodString = methodString.substring(0, methodString.lastIndexOf("throws")).trim();
                 }
-
                 Matcher matcher = pointCutPattern.matcher(methodString);
                 if (matcher.matches()) {
-                    log.info(methodString);
                     List<Object> advices = new LinkedList<>();
-                    if (!(null == config.getAspectAfter() || "".equals(config.getAspectAfter()))) {
-                        advices.add(new DhAfterReturningAdviceInterceptor(aspectClass.newInstance(), aspectMethods.get(config.getAspectAfter())));
+                    if (!(null == config.getAspectAfterReturn() || "".equals(config.getAspectAfterReturn()))) {
+                        advices.add(new DhAfterReturningAdviceInterceptor(aspectClass.newInstance(), aspectMethods.get(config.getAspectAfterReturn())));
                     }
                     if (!(null == config.getAspectAfterThrow() || "".equals(config.getAspectAfterThrow()))) {
                         DhAspectJAfterThrowingAdvice advice = new DhAspectJAfterThrowingAdvice(aspectClass.newInstance(), aspectMethods.get(config.getAspectAfterThrow()));
@@ -87,39 +84,20 @@ public class DhAdvisedSupport {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
 
-
     public List<Object> getInterceptorsAndDynamicInterceptionAdvice(Method method, Class<?> targetClass) throws  Exception{
-
-        // 从缓存中获取
-        List<Object> cached = this.methodCache.get(method);
-        // 缓存未命中，则进行下一步处理
+        List<Object> cached = methodCache.get(method);
         if (cached == null) {
-            Method m = targetClass.getMethod(method.getName(),method.getParameterTypes());
+            Method m = targetClass.getMethod(method.getName(), method.getParameterTypes());
             cached = methodCache.get(m);
-            this.methodCache.put(method, cached);
+            methodCache.put(method, cached);
         }
         return cached;
     }
 
-
-//    //根据一个目标代理类的方法，获得其对应的通知
-//    public Map<String,GPAdvice> getAdvices(Method method, Object o) throws Exception {
-//        //享元设计模式的应用
-//        Map<String,GPAdvice> cache = methodCache.get(method);
-//        if(null == cache){
-//            Method m = targetClass.getMethod(method.getName(),method.getParameterTypes());
-//            cache = methodCache.get(m);
-//            this.methodCache.put(m,cache);
-//        }
-//        return cache;
-//    }
-
-    //给ApplicationContext首先IoC中的对象初始化时调用，决定要不要生成代理类的逻辑
     public boolean pointCutMatch() {
-        return pointCutClassPattern.matcher(this.targetClass.toString()).matches();
+        return pointCutClassPattern.matcher(targetClass.toString()).matches();
     }
 
     public void setTargetClass(Class<?> targetClass) {
@@ -138,4 +116,5 @@ public class DhAdvisedSupport {
     public Object getTarget() {
         return target;
     }
+
 }

@@ -6,6 +6,10 @@ import com.dh.framework.aop.intercept.DhMethodInvocation;
 
 import java.lang.reflect.Method;
 
+/**
+ * 返回值通知拦截器
+ * 方法成功执行后执行
+ */
 public class DhAfterReturningAdviceInterceptor extends DhAbstractAspectJAdvice implements DhMethodInterceptor {
 
     private DhJoinPoint jp;
@@ -14,18 +18,19 @@ public class DhAfterReturningAdviceInterceptor extends DhAbstractAspectJAdvice i
         super(aspect, adviceMethod);
     }
 
-
-    private void afterReturning(Object returnValue, Method method, Object[] args, Object target) throws Throwable{
-        this.invokeAdviceMethod(this.jp, returnValue, null);
-    }
-
+    /**
+     * 先执行目标方法，再执行返回通知
+     */
     @Override
     public Object invoke(DhMethodInvocation mi) throws Throwable {
         jp = mi;
-        // 调用到service的方法后，回到了afterReturning的invoke方法
         Object retVal = mi.proceed();
-        afterReturning(retVal, mi.getMethod(), mi.getArguments(), mi.getThis());
+        afterReturning(retVal);
         return retVal;
+    }
+
+    private void afterReturning(Object returnValue) throws Throwable{
+        invokeAdviceMethod(jp, returnValue, null);
     }
 
 }

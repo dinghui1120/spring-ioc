@@ -9,6 +9,10 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.List;
 
+/**
+ * 基于JDK动态代理的AOP代理实现
+ * 用于目标类有实现接口的情况
+ */
 public class DhJdkDynamicAopProxy implements DhAopProxy, InvocationHandler {
 
     private DhAdvisedSupport advised;
@@ -17,6 +21,10 @@ public class DhJdkDynamicAopProxy implements DhAopProxy, InvocationHandler {
         this.advised = config;
     }
 
+    /**
+     * 实现InvocationHandler接口的invoke方法
+     * 在这里织入切面逻辑
+     */
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         List<Object> chain = advised.getInterceptorsAndDynamicInterceptionAdvice(method, advised.getTargetClass());
@@ -30,6 +38,9 @@ public class DhJdkDynamicAopProxy implements DhAopProxy, InvocationHandler {
         return getProxy(advised.getTargetClass().getClassLoader());
     }
 
+    /**
+     * 获取代理对象
+     */
     @Override
     public Object getProxy(ClassLoader classLoader) {
         return Proxy.newProxyInstance(classLoader, advised.getTargetClass().getInterfaces(), this);

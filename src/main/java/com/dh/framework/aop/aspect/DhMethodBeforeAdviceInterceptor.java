@@ -6,6 +6,10 @@ import com.dh.framework.aop.intercept.DhMethodInvocation;
 
 import java.lang.reflect.Method;
 
+/**
+ * 前置通知拦截器
+ * 在目标方法执行之前执行
+ */
 public class DhMethodBeforeAdviceInterceptor extends DhAbstractAspectJAdvice implements DhMethodInterceptor {
 
     private DhJoinPoint jp;
@@ -14,15 +18,18 @@ public class DhMethodBeforeAdviceInterceptor extends DhAbstractAspectJAdvice imp
         super(aspect, adviceMethod);
     }
 
-    public void before(Method method, Object[] arguments, Object aThis) throws Throwable{
-        invokeAdviceMethod(jp,null,null);
-    }
-
+    /**
+     * 先执行前置通知，再执行目标方法
+     */
     @Override
     public Object invoke(DhMethodInvocation mi) throws Throwable {
         jp = mi;
-        before(mi.getMethod(), mi.getArguments(), mi.getThis());
+        before();
         return mi.proceed();
+    }
+
+    public void before() throws Throwable{
+        invokeAdviceMethod(jp,null,null);
     }
 
 }

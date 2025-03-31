@@ -8,22 +8,50 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 方法调用实现类
+ * 封装了目标方法的调用，并维护了拦截器链
+ */
 public class DhMethodInvocation implements DhJoinPoint {
 
+    /**
+     * 代理对象
+     */
     protected final Object proxy;
 
+    /**
+     * 目标对象
+     */
     protected final Object target;
 
+    /**
+     * 目标方法
+     */
     protected final Method method;
 
+    /**
+     * 方法参数
+     */
     protected Object[] arguments;
 
+    /**
+     * 目标类
+     */
     private final Class<?> targetClass;
 
+    /**
+     * 用户自定义属性
+     */
     private Map<String, Object> userAttributes = new HashMap<>();
 
+    /**
+     * 拦截器链
+     */
     protected final List<?> interceptorsAndDynamicMethodMatchers;
 
+    /**
+     * 当前执行到的拦截器索引
+     */
     private int currentInterceptorIndex = -1;
 
     public DhMethodInvocation(Object proxy, Object target, Method method, Object[] arguments,
@@ -33,10 +61,16 @@ public class DhMethodInvocation implements DhJoinPoint {
             this.targetClass = targetClass;
             this.method = method;
             this.arguments = arguments;
-            // 每个方法对应的拦截链
             this.interceptorsAndDynamicMethodMatchers = interceptorsAndDynamicMethodMatchers;
     }
 
+    /**
+     * 执行方法调用，沿着拦截器链向下执行
+     * 如果执行到了链的末尾，则调用目标方法
+     * 
+     * @return 方法执行结果
+     * @throws Throwable 可能抛出的异常
+     */
     public Object proceed() throws Throwable {
         if (currentInterceptorIndex == interceptorsAndDynamicMethodMatchers.size() - 1) {
             // 执行service中的方法
@@ -68,7 +102,7 @@ public class DhMethodInvocation implements DhJoinPoint {
 
     @Override
     public void setUserAttribute(String key, Object value) {
-        userAttributes.put(key,value);
+        userAttributes.put(key, value);
     }
 
     @Override

@@ -19,18 +19,40 @@ import java.util.regex.Pattern;
  */
 @Slf4j
 public class DhAdvisedSupport {
+
+    /**
+     * AOP配置信息
+     */
     private DhAopConfig config;
+
+    /**
+     * 目标对象
+     */
     private Object target;
+
+    /**
+     * 目标类
+     */
     private Class targetClass;
+
+    /**
+     * 切点类正则表达式
+     */
     private Pattern pointCutClassPattern;
 
+    /**
+     * 方法对应的拦截器链
+     */
     private Map<Method, List<Object>> methodCache;
 
     public DhAdvisedSupport(DhAopConfig config) {
         this.config = config;
     }
 
-    //解析配置文件的方法
+    /**
+     * 解析配置文件，构建拦截器链
+     * 将切点表达式转换为正则表达式并匹配目标类和方法
+     */
     private void parse() {
         //把Spring的Expression变成Java能够识别的正则表达式
         String pointCut = config.getPointCut()
@@ -45,7 +67,6 @@ public class DhAdvisedSupport {
         //class com\.dh\.demo\.service\..*Service
         pointCutClassPattern = Pattern.compile("class " + pointCutForClassRegex.substring(pointCutForClassRegex.lastIndexOf(" ") + 1));
 
-        //享元的共享池  绑定关系
         methodCache = new HashMap<>();
         //匹配方法的正则
         Pattern pointCutPattern = Pattern.compile(pointCut);
@@ -77,7 +98,6 @@ public class DhAdvisedSupport {
                     if (!(null == config.getAspectBefore() || "".equals(config.getAspectBefore()))) {
                         advices.add(new DhMethodBeforeAdviceInterceptor(aspectClass.newInstance(), aspectMethods.get(config.getAspectBefore())));
                     }
-                    //跟目标代理类的业务方法和Advices建立一对多个关联关系，以便在Porxy类中获得
                     methodCache.put(method, advices);
                 }
             }
@@ -86,6 +106,9 @@ public class DhAdvisedSupport {
         }
     }
 
+    /**
+     * 获取目标方法对应的拦截器链
+     */
     public List<Object> getInterceptorsAndDynamicInterceptionAdvice(Method method, Class<?> targetClass) throws  Exception{
         List<Object> cached = methodCache.get(method);
         if (cached == null) {
@@ -96,6 +119,9 @@ public class DhAdvisedSupport {
         return cached;
     }
 
+    /**
+     * 目标类是否匹配切点表达式
+     */
     public boolean pointCutMatch() {
         return pointCutClassPattern.matcher(targetClass.toString()).matches();
     }

@@ -2,6 +2,9 @@ package com.dh.framework.aop.aspect;
 
 import java.lang.reflect.Method;
 
+/**
+ * 为各种通知提供基础实现
+ */
 public abstract class DhAbstractAspectJAdvice implements DhAdvice {
 
     private Object aspect;
@@ -13,6 +16,9 @@ public abstract class DhAbstractAspectJAdvice implements DhAdvice {
         this.adviceMethod = adviceMethod;
     }
 
+    /**
+     * 调用通知方法
+     */
     protected Object invokeAdviceMethod(DhJoinPoint joinPoint, Object returnValue, Throwable ex) throws Throwable {
         Class<?> [] paramTypes = adviceMethod.getParameterTypes();
         if (paramTypes.length == 0) {

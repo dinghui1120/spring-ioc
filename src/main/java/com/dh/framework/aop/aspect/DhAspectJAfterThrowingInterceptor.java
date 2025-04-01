@@ -10,14 +10,14 @@ import java.lang.reflect.Method;
  * 异常通知拦截器
  * 在目标方法抛出异常时执行
  */
-public class DhAspectJAfterThrowingAdvice extends DhAbstractAspectJAdvice implements DhMethodInterceptor {
+public class DhAspectJAfterThrowingInterceptor extends DhAbstractAspectJAdvice implements DhMethodInterceptor {
 
     /**
      * 异常参数名
      */
     private String throwName;
 
-    public DhAspectJAfterThrowingAdvice(Object aspect, Method adviceMethod) {
+    public DhAspectJAfterThrowingInterceptor(Object aspect, Method adviceMethod) {
         super(aspect, adviceMethod);
     }
 

@@ -1,7 +1,7 @@
 package com.dh.framework.aop.support;
 
 import com.dh.framework.aop.aspect.DhAfterReturningAdviceInterceptor;
-import com.dh.framework.aop.aspect.DhAspectJAfterThrowingAdvice;
+import com.dh.framework.aop.aspect.DhAspectJAfterThrowingInterceptor;
 import com.dh.framework.aop.aspect.DhMethodBeforeAdviceInterceptor;
 import com.dh.framework.aop.config.DhAopConfig;
 import lombok.extern.slf4j.Slf4j;
@@ -121,7 +121,7 @@ public class DhAdvisedSupport {
             if (isValidMethod(afterThrowMethod)) {
                 Method aspectMethod = aspectMethods.get(afterThrowMethod);
                 if (aspectMethod != null) {
-                    DhAspectJAfterThrowingAdvice advice = new DhAspectJAfterThrowingAdvice(aspectInstance, aspectMethod);
+                    DhAspectJAfterThrowingInterceptor advice = new DhAspectJAfterThrowingInterceptor(aspectInstance, aspectMethod);
                     // 设置异常名称
                     String throwName = config.getAspectAfterThrowingName();
                     if (throwName != null) {

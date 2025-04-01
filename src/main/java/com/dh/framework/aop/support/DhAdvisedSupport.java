@@ -51,7 +51,6 @@ public class DhAdvisedSupport {
 
     /**
      * 解析配置文件，构建拦截器链
-     * 将切点表达式转换为正则表达式并匹配目标类和方法
      */
     public void parse() {
         //把Spring的Expression变成Java能够识别的正则表达式
@@ -71,7 +70,7 @@ public class DhAdvisedSupport {
         //匹配方法的正则
         Pattern pointCutPattern = Pattern.compile(pointCut);
         try {
-            Class aspectClass = Class.forName(config.getAspectClass());
+            Class<?> aspectClass = Class.forName(config.getAspectClass());
             Map<String, Method> aspectMethods = new HashMap<>();
             for (Method method : aspectClass.getMethods()) {
                 aspectMethods.put(method.getName(), method);
@@ -86,23 +85,56 @@ public class DhAdvisedSupport {
                 }
                 Matcher matcher = pointCutPattern.matcher(methodString);
                 if (matcher.matches()) {
-                    List<Object> advices = new LinkedList<>();
-                    if (!(null == config.getAspectAfterReturn() || "".equals(config.getAspectAfterReturn()))) {
-                        advices.add(new DhAfterReturningAdviceInterceptor(aspectClass.newInstance(), aspectMethods.get(config.getAspectAfterReturn())));
-                    }
-                    if (!(null == config.getAspectAfterThrow() || "".equals(config.getAspectAfterThrow()))) {
-                        DhAspectJAfterThrowingAdvice advice = new DhAspectJAfterThrowingAdvice(aspectClass.newInstance(), aspectMethods.get(config.getAspectAfterThrow()));
-                        advice.setThrowName(config.getAspectAfterThrowingName());
-                        advices.add(advice);
-                    }
-                    if (!(null == config.getAspectBefore() || "".equals(config.getAspectBefore()))) {
-                        advices.add(new DhMethodBeforeAdviceInterceptor(aspectClass.newInstance(), aspectMethods.get(config.getAspectBefore())));
-                    }
-                    methodCache.put(method, advices);
+                    buildAdviceChain(method, aspectClass, aspectMethods);
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    /**
+     * 为匹配的方法构建拦截器链
+     */
+    private void buildAdviceChain(Method method, Class<?> aspectClass, Map<String, Method> aspectMethods) {
+        List<Object> advices = new LinkedList<>();
+        try {
+            Object aspectInstance = aspectClass.newInstance();
+            // 添加返回通知
+            String afterReturnMethod = config.getAspectAfterReturn();
+            if (isValidMethod(afterReturnMethod)) {
+                Method aspectMethod = aspectMethods.get(afterReturnMethod);
+                if (aspectMethod != null) {
+                    advices.add(new DhAfterReturningAdviceInterceptor(aspectInstance, aspectMethod));
+                }
+            }
+            // 添加前置通知
+            String beforeMethod = config.getAspectBefore();
+            if (isValidMethod(beforeMethod)) {
+                Method aspectMethod = aspectMethods.get(beforeMethod);
+                if (aspectMethod != null) {
+                    advices.add(new DhMethodBeforeAdviceInterceptor(aspectInstance, aspectMethod));
+                }
+            }
+            // 添加异常通知
+            String afterThrowMethod = config.getAspectAfterThrow();
+            if (isValidMethod(afterThrowMethod)) {
+                Method aspectMethod = aspectMethods.get(afterThrowMethod);
+                if (aspectMethod != null) {
+                    DhAspectJAfterThrowingAdvice advice = new DhAspectJAfterThrowingAdvice(aspectInstance, aspectMethod);
+                    // 设置异常名称
+                    String throwName = config.getAspectAfterThrowingName();
+                    if (throwName != null) {
+                        advice.setThrowName(throwName);
+                    }
+                    advices.add(advice);
+                }
+            }
+            if (!advices.isEmpty()) {
+                methodCache.put(method, advices);
+            }
+        } catch (Exception e) {
+            log.error("创建通知实例失败: {}", e.getMessage());
         }
     }
 
@@ -140,6 +172,11 @@ public class DhAdvisedSupport {
 
     public Object getTarget() {
         return target;
+    }
+
+    // 辅助方法：检查方法名是否有效
+    private boolean isValidMethod(String methodName) {
+        return methodName != null && !methodName.trim().isEmpty();
     }
 
 }

@@ -202,6 +202,9 @@ public class DhApplicationContext implements DhBeanFactory {
         return registry.beanDefinitionMap.keySet().toArray(new String[0]);
     }
 
+    /**
+     * 获取AOP配置
+     */
     private DhAdvisedSupport instantiationAopConfig() {
         DhAopConfig config = new DhAopConfig();
         config.setPointCut(reader.getConfig().getProperty("pointCut"));

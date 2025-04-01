@@ -53,7 +53,7 @@ public class DhAdvisedSupport {
      * 解析配置文件，构建拦截器链
      * 将切点表达式转换为正则表达式并匹配目标类和方法
      */
-    private void parse() {
+    public void parse() {
         //把Spring的Expression变成Java能够识别的正则表达式
         String pointCut = config.getPointCut()
                 .replaceAll("\\.", "\\\\.")
@@ -128,7 +128,6 @@ public class DhAdvisedSupport {
 
     public void setTargetClass(Class<?> targetClass) {
         this.targetClass = targetClass;
-        parse();
     }
 
     public void setTarget(Object target) {

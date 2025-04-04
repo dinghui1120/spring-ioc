@@ -25,6 +25,11 @@ public class LogAspect {
         log.info("Invoke After Throwing Method,methodName:{},e:{}", joinPoint.getMethod().getName(), ex);
     }
 
+    public void after(DhJoinPoint joinPoint) {
+        log.info("后置通知 - 方法执行: {}", joinPoint.getMethod().getName());
+    }
+
+
     public Object around(DhProceedingJoinPoint pjp) throws Throwable {
         Method method = pjp.getMethod();
         String methodName = method.getName();
@@ -36,24 +41,28 @@ public class LogAspect {
         Object result;
         try {
             // 可以在这里修改方法参数
-            if (args != null) {
-                args[0] = "修改后参数";
-            }
-            result = pjp.proceed(args);
+            // Object[] newArgs = new Object[]{ ... };
+            // result = pjp.proceed(newArgs);
             
             // 执行目标方法
-            //result = pjp.proceed();
+            result = pjp.proceed();
             log.info("环绕通知 - 方法正常返回: {}, 返回值: {}", methodName, result);
             
             // 可以在这里修改返回值
-            result = "修改后结果";
+            // if (result != null) {
+            //     result = ...;
+            // }
         } catch (Throwable ex) {
             log.error("环绕通知 - 方法异常: {}, 异常信息: {}", methodName, ex.getMessage());
-            throw ex;
+            
+            // 可以选择处理异常或重新抛出
+            // return fallbackValue; // 返回降级结果
+            throw ex; // 重新抛出异常
         } finally {
             long endTime = System.currentTimeMillis();
             log.info("环绕通知 - 方法结束: {}, 耗时: {}ms", methodName, (endTime - startTime));
         }
+        
         return result;
     }
 

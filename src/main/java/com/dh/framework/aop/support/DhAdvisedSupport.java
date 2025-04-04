@@ -1,9 +1,6 @@
 package com.dh.framework.aop.support;
 
-import com.dh.framework.aop.aspect.DhAfterReturningAdviceInterceptor;
-import com.dh.framework.aop.aspect.DhAspectJAfterThrowingInterceptor;
-import com.dh.framework.aop.aspect.DhMethodAroundAdviceInterceptor;
-import com.dh.framework.aop.aspect.DhMethodBeforeAdviceInterceptor;
+import com.dh.framework.aop.aspect.*;
 import com.dh.framework.aop.config.DhAopConfig;
 import lombok.extern.slf4j.Slf4j;
 
@@ -137,6 +134,14 @@ public class DhAdvisedSupport {
                 Method aspectMethod = aspectMethods.get(aroundMethod);
                 if (aspectMethod != null) {
                     advices.add(new DhMethodAroundAdviceInterceptor(aspectInstance, aspectMethod));
+                }
+            }
+            // 添加后置通知
+            String afterMethod = config.getAspectAfter();
+            if (isValidMethod(afterMethod)) {
+                Method aspectMethod = aspectMethods.get(afterMethod);
+                if (aspectMethod != null) {
+                    advices.add(new DhAfterAdviceInterceptor(aspectInstance, aspectMethod));
                 }
             }
             if (!advices.isEmpty()) {

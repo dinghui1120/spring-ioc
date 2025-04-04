@@ -28,9 +28,11 @@ public class DhJdkDynamicAopProxy implements DhAopProxy, InvocationHandler {
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         List<Object> chain = advised.getInterceptorsAndDynamicInterceptionAdvice(method, advised.getTargetClass());
-
-        DhMethodInvocation mi = new DhMethodInvocation(proxy, advised.getTarget(), method, args, advised.getTargetClass(), chain);
-
+        if (chain == null || chain.isEmpty()) {
+            return method.invoke(advised.getTarget(), args);
+        }
+        DhMethodInvocation mi = new DhMethodInvocation(proxy, advised.getTarget(), method, args,
+                advised.getTargetClass(), chain);
         return mi.proceed();
     }
 

@@ -5,6 +5,7 @@ import com.dh.framework.aop.support.DhAdvisedSupport;
 
 /**
  * AOP代理工厂
+ * 根据目标类情况选择合适的代理方式
  */
 public class DhDefaultAopProxyFactory {
 
@@ -18,7 +19,7 @@ public class DhDefaultAopProxyFactory {
         if (targetClass.getInterfaces().length > 0) {
             return new DhJdkDynamicAopProxy(config);
         }
-        return new DhCglibAopPorxy();
+        return new DhCglibAopProxy(config);
     }
 
 }

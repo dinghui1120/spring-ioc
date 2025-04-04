@@ -31,7 +31,7 @@ public class DhAspectJAfterThrowingInterceptor extends DhAbstractAspectJAdvice i
         try {
             return mi.proceed();
         } catch (Throwable ex) {
-            log.info("throwType:{},ex:{}", throwType, ex.getClass());
+            log.info("configThrowType:{},exType:{}", throwType, ex.getClass());
             // 如果指定了异常类型，则只处理该类型的异常
             if (throwType == null || throwType.isAssignableFrom(ex.getClass())) {
                 invokeAdviceMethod(mi, null, ex);

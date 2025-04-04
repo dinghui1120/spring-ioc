@@ -5,6 +5,7 @@ import com.dh.framework.aop.intercept.DhMethodInterceptor;
 import com.dh.framework.aop.intercept.DhMethodInvocation;
 import lombok.extern.slf4j.Slf4j;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 /**
@@ -31,13 +32,26 @@ public class DhAspectJAfterThrowingInterceptor extends DhAbstractAspectJAdvice i
         try {
             return mi.proceed();
         } catch (Throwable ex) {
-            log.info("configThrowType:{},exType:{}", throwType, ex.getClass());
+            // 处理InvocationTargetException，获取原始异常
+            Throwable targetEx = unwrapThrowable(ex);
+            log.info("configThrowType:{}, exType:{}", throwType, targetEx.getClass());
             // 如果指定了异常类型，则只处理该类型的异常
-            if (throwType == null || throwType.isAssignableFrom(ex.getClass())) {
-                invokeAdviceMethod(mi, null, ex);
+            if (throwType == null || throwType.isAssignableFrom(targetEx.getClass())) {
+                invokeAdviceMethod(mi, null, targetEx);
             }
-            throw ex;
+            throw targetEx;
         }
+    }
+    
+    /**
+     * 获取原始异常
+     * 如果是InvocationTargetException，则获取其目标异常
+     */
+    private Throwable unwrapThrowable(Throwable ex) {
+        if (ex instanceof InvocationTargetException) {
+            return ((InvocationTargetException) ex).getTargetException();
+        }
+        return ex;
     }
     
     /**

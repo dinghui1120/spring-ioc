@@ -128,20 +128,20 @@ public class DhAdvisedSupport {
                     advices.add(advice);
                 }
             }
-            // 添加环绕通知
-            String aroundMethod = config.getAspectAround();
-            if (isValidMethod(aroundMethod)) {
-                Method aspectMethod = aspectMethods.get(aroundMethod);
-                if (aspectMethod != null) {
-                    advices.add(new DhMethodAroundAdviceInterceptor(aspectInstance, aspectMethod));
-                }
-            }
             // 添加后置通知
             String afterMethod = config.getAspectAfter();
             if (isValidMethod(afterMethod)) {
                 Method aspectMethod = aspectMethods.get(afterMethod);
                 if (aspectMethod != null) {
                     advices.add(new DhAfterAdviceInterceptor(aspectInstance, aspectMethod));
+                }
+            }
+            // 添加环绕通知
+            String aroundMethod = config.getAspectAround();
+            if (isValidMethod(aroundMethod)) {
+                Method aspectMethod = aspectMethods.get(aroundMethod);
+                if (aspectMethod != null) {
+                    advices.add(new DhMethodAroundAdviceInterceptor(aspectInstance, aspectMethod));
                 }
             }
             if (!advices.isEmpty()) {

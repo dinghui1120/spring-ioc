@@ -24,13 +24,11 @@ public class DhAfterAdviceInterceptor extends DhAbstractAspectJAdvice implements
     @Override
     public Object invoke(DhMethodInvocation mi) throws Throwable {
         jp = mi;
-        Object retVal;
         try {
-            retVal = mi.proceed();
+            return mi.proceed();
         } finally {
             after();
         }
-        return retVal;
     }
 
     public void after() throws Throwable {

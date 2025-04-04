@@ -3,6 +3,7 @@ package com.dh.framework.aop.aspect;
 
 import com.dh.framework.aop.intercept.DhMethodInterceptor;
 import com.dh.framework.aop.intercept.DhMethodInvocation;
+import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Method;
 
@@ -10,13 +11,13 @@ import java.lang.reflect.Method;
  * 异常通知拦截器
  * 在目标方法抛出异常时执行
  */
+@Slf4j
 public class DhAspectJAfterThrowingInterceptor extends DhAbstractAspectJAdvice implements DhMethodInterceptor {
 
     /**
-     * 异常参数名
+     * 要捕获的异常类型
      */
-    private String throwName;
-    private int throwingParamIndex = -1;
+    private Class<?> throwType;
 
     public DhAspectJAfterThrowingInterceptor(Object aspect, Method adviceMethod) {
         super(aspect, adviceMethod);
@@ -30,46 +31,38 @@ public class DhAspectJAfterThrowingInterceptor extends DhAbstractAspectJAdvice i
         try {
             return mi.proceed();
         } catch (Throwable ex) {
-            invokeAdviceMethod(mi, null, ex);
+            // 如果指定了异常类型，则只处理该类型的异常
+            if (this.throwType == null || this.throwType.isAssignableFrom(ex.getClass())) {
+                invokeAdviceMethod(mi, null, ex);
+            }
             throw ex;
         }
     }
     
     /**
-     * 重写父类的异常参数绑定方法
-     * 实现根据指定位置绑定异常参数
+     * 设置要捕获的异常类型名称
+     * 此方法用于指定拦截器只处理特定类型的异常
+     * @param typeName 异常类型的全限定名
      */
-    @Override
-    protected void bindExceptionParameter(Object[] args, int paramIndex, Class<?> paramType, Throwable ex) {
-        if (throwingParamIndex >= 0) {
-            if (paramIndex == throwingParamIndex && paramType.isAssignableFrom(ex.getClass())) {
-                args[paramIndex] = ex;
+    public void setThrowType(String typeName) {
+        if (typeName != null && !typeName.isEmpty()) {
+            try {
+                this.throwType = Class.forName(typeName);
+                if (!Throwable.class.isAssignableFrom(this.throwType)) {
+                    log.error("指定的类型 '" + typeName + "' 不是Throwable的子类");
+                    this.throwType = null;
+                }
+            } catch (ClassNotFoundException e) {
+                log.error("无法加载指定的异常类型 '" + typeName + "'");
+                this.throwType = null;
             }
-        } else {
-            super.bindExceptionParameter(args, paramIndex, paramType, ex);
         }
     }
     
     /**
-     * 设置异常参数名
-     * 通过参数位置映射实现名称自定义
-     * @param throwName 异常参数名
+     * 获取要捕获的异常类型
      */
-    public void setThrowName(String throwName) {
-        this.throwName = throwName;
-        if (throwName != null && !throwName.isEmpty()) {
-            boolean firstIsJoinPoint = adviceMethod.getParameterTypes().length > 0
-                    && adviceMethod.getParameterTypes()[0] == DhJoinPoint.class;
-            throwingParamIndex = firstIsJoinPoint ? 1 : 0;
-        } else {
-            throwingParamIndex = -1;
-        }
-    }
-    
-    /**
-     * 获取异常参数名
-     */
-    public String getThrowName() {
-        return this.throwName;
+    public Class<?> getThrowType() {
+        return this.throwType;
     }
 }

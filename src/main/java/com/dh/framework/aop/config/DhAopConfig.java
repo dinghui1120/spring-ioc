@@ -34,8 +34,9 @@ public class DhAopConfig {
     private String aspectAfterThrow;
 
     /**
-     * 异常通知中使用的异常参数名
+     * 异常通知中要捕获的异常类型全限定名
+     * 如果不指定，则捕获所有Throwable异常
      */
-    private String aspectAfterThrowingName;
+    private String aspectAfterThrowingType;
 
 }

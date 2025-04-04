@@ -213,7 +213,7 @@ public class DhApplicationContext implements DhBeanFactory {
         config.setAspectBefore(reader.getConfig().getProperty("aspectBefore"));
         config.setAspectAfterReturn(reader.getConfig().getProperty("aspectAfterReturn"));
         config.setAspectAfterThrow(reader.getConfig().getProperty("aspectAfterThrow"));
-        config.setAspectAfterThrowingName(reader.getConfig().getProperty("aspectAfterThrowingName"));
+        config.setAspectAfterThrowingType(reader.getConfig().getProperty("aspectAfterThrowingType"));
         return new DhAdvisedSupport(config);
     }
 

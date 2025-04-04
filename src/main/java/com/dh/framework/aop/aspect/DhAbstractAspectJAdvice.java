@@ -37,9 +37,7 @@ public abstract class DhAbstractAspectJAdvice implements DhAdvice {
     }
     
     /**
-     * 绑定异常参数的模板方法
-     * 默认实现是根据类型兼容性将异常对象传递给参数
-     * 子类可以重写此方法实现特定的绑定逻辑
+     * 绑定异常参数
      */
     protected void bindExceptionParameter(Object[] args, int paramIndex, Class<?> paramType, Throwable ex) {
         if (paramType.isAssignableFrom(ex.getClass())) {

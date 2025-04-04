@@ -122,10 +122,10 @@ public class DhAdvisedSupport {
                 Method aspectMethod = aspectMethods.get(afterThrowMethod);
                 if (aspectMethod != null) {
                     DhAspectJAfterThrowingInterceptor advice = new DhAspectJAfterThrowingInterceptor(aspectInstance, aspectMethod);
-                    // 设置异常名称
-                    String throwName = config.getAspectAfterThrowingName();
-                    if (throwName != null) {
-                        advice.setThrowName(throwName);
+                    // 设置异常类型
+                    String throwType = config.getAspectAfterThrowingType();
+                    if (throwType != null) {
+                        advice.setThrowType(throwType);
                     }
                     advices.add(advice);
                 }

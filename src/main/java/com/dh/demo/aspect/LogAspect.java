@@ -41,28 +41,24 @@ public class LogAspect {
         Object result;
         try {
             // 可以在这里修改方法参数
-            // Object[] newArgs = new Object[]{ ... };
-            // result = pjp.proceed(newArgs);
+//            if (args != null) {
+//                args[0] = "修改后参数";
+//            }
+//            result = pjp.proceed(args);
             
             // 执行目标方法
             result = pjp.proceed();
             log.info("环绕通知 - 方法正常返回: {}, 返回值: {}", methodName, result);
             
             // 可以在这里修改返回值
-            // if (result != null) {
-            //     result = ...;
-            // }
+            // result = "修改后返回值";
         } catch (Throwable ex) {
             log.error("环绕通知 - 方法异常: {}, 异常信息: {}", methodName, ex.getMessage());
-            
-            // 可以选择处理异常或重新抛出
-            // return fallbackValue; // 返回降级结果
-            throw ex; // 重新抛出异常
+            throw ex;
         } finally {
             long endTime = System.currentTimeMillis();
             log.info("环绕通知 - 方法结束: {}, 耗时: {}ms", methodName, (endTime - startTime));
         }
-        
         return result;
     }
 

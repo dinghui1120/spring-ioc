@@ -34,10 +34,8 @@ public class LogAspect {
         Method method = pjp.getMethod();
         String methodName = method.getName();
         Object[] args = pjp.getArguments();
-        
         log.info("环绕通知 - 方法开始: {}, 参数: {}", methodName, args);
         long startTime = System.currentTimeMillis();
-        
         Object result;
         try {
             // 可以在这里修改方法参数
@@ -45,11 +43,9 @@ public class LogAspect {
 //                args[0] = "修改后参数";
 //            }
 //            result = pjp.proceed(args);
-            
             // 执行目标方法
             result = pjp.proceed();
             log.info("环绕通知 - 方法正常返回: {}, 返回值: {}", methodName, result);
-            
             // 可以在这里修改返回值
             // result = "修改后返回值";
         } catch (Throwable ex) {

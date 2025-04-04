@@ -65,11 +65,7 @@ public class DhMethodInvocation implements DhJoinPoint {
     }
 
     /**
-     * 执行方法调用，沿着拦截器链向下执行
-     * 如果执行到了链的末尾，则调用目标方法
-     * 
-     * @return 方法执行结果
-     * @throws Throwable 可能抛出的异常
+     * 执行方法调用
      */
     public Object proceed() throws Throwable {
         if (currentInterceptorIndex == interceptorsAndDynamicMethodMatchers.size() - 1) {
@@ -87,10 +83,6 @@ public class DhMethodInvocation implements DhJoinPoint {
 
     /**
      * 使用新的参数执行方法调用
-     *
-     * @param args 新的方法参数
-     * @return 方法执行的返回值
-     * @throws Throwable 可能抛出的异常
      */
     public Object proceed(Object[] args) throws Throwable {
         if (args != null) {

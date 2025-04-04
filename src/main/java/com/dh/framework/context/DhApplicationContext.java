@@ -214,6 +214,7 @@ public class DhApplicationContext implements DhBeanFactory {
         config.setAspectAfterReturn(reader.getConfig().getProperty("aspectAfterReturn"));
         config.setAspectAfterThrow(reader.getConfig().getProperty("aspectAfterThrow"));
         config.setAspectAfterThrowingType(reader.getConfig().getProperty("aspectAfterThrowingType"));
+        config.setAspectAround(reader.getConfig().getProperty("aspectAround"));
         return new DhAdvisedSupport(config);
     }
 

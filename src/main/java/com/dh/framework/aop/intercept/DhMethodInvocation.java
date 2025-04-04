@@ -85,6 +85,20 @@ public class DhMethodInvocation implements DhJoinPoint {
         }
     }
 
+    /**
+     * 使用新的参数执行方法调用
+     *
+     * @param args 新的方法参数
+     * @return 方法执行的返回值
+     * @throws Throwable 可能抛出的异常
+     */
+    public Object proceed(Object[] args) throws Throwable {
+        if (args != null) {
+            this.arguments = args;
+        }
+        return proceed();
+    }
+
     @Override
     public Object getThis() {
         return this.target;

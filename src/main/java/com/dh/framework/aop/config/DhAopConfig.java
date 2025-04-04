@@ -39,4 +39,9 @@ public class DhAopConfig {
      */
     private String aspectAfterThrowingType;
 
+    /**
+     * 环绕通知方法名
+     */
+    private String aspectAround;
+
 }

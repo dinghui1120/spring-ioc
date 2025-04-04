@@ -2,6 +2,7 @@ package com.dh.framework.aop.support;
 
 import com.dh.framework.aop.aspect.DhAfterReturningAdviceInterceptor;
 import com.dh.framework.aop.aspect.DhAspectJAfterThrowingInterceptor;
+import com.dh.framework.aop.aspect.DhMethodAroundAdviceInterceptor;
 import com.dh.framework.aop.aspect.DhMethodBeforeAdviceInterceptor;
 import com.dh.framework.aop.config.DhAopConfig;
 import lombok.extern.slf4j.Slf4j;
@@ -128,6 +129,14 @@ public class DhAdvisedSupport {
                         advice.setThrowType(throwType);
                     }
                     advices.add(advice);
+                }
+            }
+            // 添加环绕通知
+            String aroundMethod = config.getAspectAround();
+            if (isValidMethod(aroundMethod)) {
+                Method aspectMethod = aspectMethods.get(aroundMethod);
+                if (aspectMethod != null) {
+                    advices.add(new DhMethodAroundAdviceInterceptor(aspectInstance, aspectMethod));
                 }
             }
             if (!advices.isEmpty()) {

@@ -7,9 +7,8 @@ import java.lang.reflect.Method;
  */
 public abstract class DhAbstractAspectJAdvice implements DhAdvice {
 
-    private Object aspect;
-    private Method adviceMethod;
-    private String throwName;
+    protected Object aspect;
+    protected Method adviceMethod;
 
     public DhAbstractAspectJAdvice(Object aspect, Method adviceMethod) {
         this.aspect = aspect;
@@ -28,13 +27,23 @@ public abstract class DhAbstractAspectJAdvice implements DhAdvice {
         for (int i = 0; i < paramTypes.length; i++) {
             if (paramTypes[i] == DhJoinPoint.class) {
                 args[i] = joinPoint;
-            } else if (paramTypes[i] == Throwable.class) {
-                args[i] = ex;
             } else if (paramTypes[i] == Object.class) {
                 args[i] = returnValue;
+            } else if (ex != null) {
+                bindExceptionParameter(args, i, paramTypes[i], ex);
             }
         }
         return adviceMethod.invoke(aspect, args);
     }
-
+    
+    /**
+     * 绑定异常参数的模板方法
+     * 默认实现是根据类型兼容性将异常对象传递给参数
+     * 子类可以重写此方法实现特定的绑定逻辑
+     */
+    protected void bindExceptionParameter(Object[] args, int paramIndex, Class<?> paramType, Throwable ex) {
+        if (paramType.isAssignableFrom(ex.getClass())) {
+            args[paramIndex] = ex;
+        }
+    }
 }

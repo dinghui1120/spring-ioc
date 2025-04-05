@@ -11,7 +11,7 @@ import com.dh.framework.annotation.DhService;
  * @author: dh
  * @date: 2024年12月01日
  **/
-@DhService()
+@DhService
 public class ModifyService implements IModifyService {
 
 	@DhAutowired

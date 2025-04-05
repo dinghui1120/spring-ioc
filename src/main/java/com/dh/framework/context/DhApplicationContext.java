@@ -183,7 +183,7 @@ public class DhApplicationContext implements DhBeanFactory {
             String autowiredBeanName = autowired.value().trim();
             if ("".equals(autowiredBeanName)) {
                 //获得字段的完全限定名
-                autowiredBeanName = field.getType().getName();
+                autowiredBeanName = field.getName();
             }
             //强制访问
             field.setAccessible(true);

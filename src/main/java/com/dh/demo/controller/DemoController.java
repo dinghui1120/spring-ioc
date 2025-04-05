@@ -3,6 +3,7 @@ package com.dh.demo.controller;
 
 import com.dh.demo.service.IModifyService;
 import com.dh.demo.service.IQueryService;
+import com.dh.demo.service.TestCglibService;
 import com.dh.framework.annotation.DhAutowired;
 import com.dh.framework.annotation.DhController;
 import com.dh.framework.annotation.DhRequestMapping;
@@ -24,6 +25,8 @@ public class DemoController {
 	IQueryService queryService;
 	@DhAutowired
 	IModifyService modifyService;
+	@DhAutowired
+	TestCglibService testCglibService;
 
 	@DhRequestMapping("query")
 	public void query(HttpServletResponse response, @DhRequestParam("name") String name) {
@@ -46,6 +49,18 @@ public class DemoController {
 	@DhRequestMapping("edit")
 	public void edit(HttpServletResponse response, @DhRequestParam("id") Integer id, @DhRequestParam("name") String name) {
 		String result = modifyService.edit(id, name);
+		out(response, result);
+	}
+
+	@DhRequestMapping("cglibNormal")
+	public void testCglibNormal(HttpServletResponse response) {
+		String result = testCglibService.testNormal();
+		out(response, result);
+	}
+
+	@DhRequestMapping("cglibException")
+	public void testCglibException(HttpServletResponse response) {
+		String result = testCglibService.testException();
 		out(response, result);
 	}
 

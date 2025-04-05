@@ -98,20 +98,20 @@ public class DhAdvisedSupport {
         List<Object> advices = new LinkedList<>();
         try {
             Object aspectInstance = aspectClass.newInstance();
-            // 添加环绕通知
-            String aroundMethod = config.getAspectAround();
-            if (isValidMethod(aroundMethod)) {
-                Method aspectMethod = aspectMethods.get(aroundMethod);
-                if (aspectMethod != null) {
-                    advices.add(new DhMethodAroundAdviceInterceptor(aspectInstance, aspectMethod));
-                }
-            }
             // 添加后置通知
             String afterMethod = config.getAspectAfter();
             if (isValidMethod(afterMethod)) {
                 Method aspectMethod = aspectMethods.get(afterMethod);
                 if (aspectMethod != null) {
                     advices.add(new DhAfterAdviceInterceptor(aspectInstance, aspectMethod));
+                }
+            }
+            // 添加环绕通知
+            String aroundMethod = config.getAspectAround();
+            if (isValidMethod(aroundMethod)) {
+                Method aspectMethod = aspectMethods.get(aroundMethod);
+                if (aspectMethod != null) {
+                    advices.add(new DhMethodAroundAdviceInterceptor(aspectInstance, aspectMethod));
                 }
             }
             // 添加返回通知
@@ -122,6 +122,7 @@ public class DhAdvisedSupport {
                     advices.add(new DhAfterReturningAdviceInterceptor(aspectInstance, aspectMethod));
                 }
             }
+
             // 添加前置通知
             String beforeMethod = config.getAspectBefore();
             if (isValidMethod(beforeMethod)) {

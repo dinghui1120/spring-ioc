@@ -3,7 +3,9 @@ package com.dh.demo.aspect;
 import com.dh.framework.aop.aspect.joinpoint.DhJoinPoint;
 import com.dh.framework.aop.aspect.joinpoint.DhProceedingJoinPoint;
 import lombok.extern.slf4j.Slf4j;
+
 import java.lang.reflect.Method;
+import java.text.SimpleDateFormat;
 
 
 @Slf4j
@@ -22,10 +24,14 @@ public class LogAspect {
     }
 
     public void afterThrowing(DhJoinPoint joinPoint, Throwable ex) {
+        long startTime = (Long) joinPoint.getUserAttribute("startTime_" + joinPoint.getMethod().getName());
+        log.info("Invoke After Throwing Method,startTime:{}", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(startTime));
         log.info("Invoke After Throwing Method,methodName:{},e:{}", joinPoint.getMethod().getName(), ex);
     }
 
     public void after(DhJoinPoint joinPoint) {
+        long startTime = (Long) joinPoint.getUserAttribute("startTime_" + joinPoint.getMethod().getName());
+        log.info("后置通知,startTime:{}", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(startTime));
         log.info("后置通知 - 方法执行: {}", joinPoint.getMethod().getName());
     }
 
@@ -35,7 +41,6 @@ public class LogAspect {
         String methodName = method.getName();
         Object[] args = pjp.getArguments();
         log.info("环绕通知 - 方法开始: {}, 参数: {}", methodName, args);
-        long startTime = System.currentTimeMillis();
         Object result;
         try {
             // 可以在这里修改方法参数
@@ -52,6 +57,8 @@ public class LogAspect {
             log.error("环绕通知 - 方法异常: {}, 异常信息: {}", methodName, ex.getMessage());
             throw ex;
         } finally {
+            long startTime = (Long) pjp.getUserAttribute("startTime_" + pjp.getMethod().getName());
+            log.info("环绕通知,startTime:{}", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(startTime));
             long endTime = System.currentTimeMillis();
             log.info("环绕通知 - 方法结束: {}, 耗时: {}ms", methodName, (endTime - startTime));
         }

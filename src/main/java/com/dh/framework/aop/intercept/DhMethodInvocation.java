@@ -1,6 +1,5 @@
 package com.dh.framework.aop.intercept;
 
-
 import com.dh.framework.aop.aspect.joinpoint.DhAbstractJoinPoint;
 
 import java.lang.reflect.Method;
@@ -27,11 +26,23 @@ public class DhMethodInvocation extends DhAbstractJoinPoint {
      */
     private int currentInterceptorIndex = -1;
 
+    /**
+     * 是否是最外层调用
+     * 用于确定何时清理ThreadLocal资源
+     */
+    private final boolean isRootInvocation;
+
     public DhMethodInvocation(Object proxy, Object target, Method method, Object[] arguments,
                 Class<?> targetClass, List<Object> interceptorsAndDynamicMethodMatchers) {
-            super(target, method, arguments, targetClass);
-            this.proxy = proxy;
-            this.interceptorsAndDynamicMethodMatchers = interceptorsAndDynamicMethodMatchers;
+        this(proxy, target, method, arguments, targetClass, interceptorsAndDynamicMethodMatchers, true);
+    }
+    
+    protected DhMethodInvocation(Object proxy, Object target, Method method, Object[] arguments,
+                Class<?> targetClass, List<Object> interceptorsAndDynamicMethodMatchers, boolean isRootInvocation) {
+        super(target, method, arguments, targetClass);
+        this.proxy = proxy;
+        this.interceptorsAndDynamicMethodMatchers = interceptorsAndDynamicMethodMatchers;
+        this.isRootInvocation = isRootInvocation;
     }
 
     /**
@@ -59,6 +70,14 @@ public class DhMethodInvocation extends DhAbstractJoinPoint {
             this.arguments = args;
         }
         return proceed();
+    }
+
+    /**
+     * 检查当前调用是否为最外层调用
+     * 用于确定是否应该清理ThreadLocal资源
+     */
+    public boolean isRootInvocation() {
+        return isRootInvocation;
     }
 
 }

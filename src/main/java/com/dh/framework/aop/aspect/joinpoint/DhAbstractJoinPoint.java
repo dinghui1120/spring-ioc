@@ -1,7 +1,6 @@
 package com.dh.framework.aop.aspect.joinpoint;
 
 import java.lang.reflect.Method;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -30,11 +29,6 @@ public abstract class DhAbstractJoinPoint implements DhJoinPoint {
      */
     protected final Class<?> targetClass;
 
-    /**
-     * 用户自定义属性
-     */
-    protected Map<String, Object> userAttributes = new HashMap<>();
-
     public DhAbstractJoinPoint(Object target, Method method, Object[] arguments, Class<?> targetClass) {
         this.target = target;
         this.method = method;
@@ -59,16 +53,23 @@ public abstract class DhAbstractJoinPoint implements DhJoinPoint {
 
     @Override
     public void setUserAttribute(String key, Object value) {
-        userAttributes.put(key, value);
+        JoinPointContext.setAttribute(key, value);
     }
 
     @Override
     public Object getUserAttribute(String key) {
-        return userAttributes.get(key);
+        return JoinPointContext.getAttribute(key);
     }
 
     public Class<?> getTargetClass() {
         return this.targetClass;
+    }
+    
+    /**
+     * 获取所有用户属性
+     */
+    public Map<String, Object> getUserAttributes() {
+        return JoinPointContext.getAttributes();
     }
 
 } 

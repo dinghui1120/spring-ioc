@@ -67,10 +67,8 @@ public abstract class DhAbstractJoinPoint implements DhJoinPoint {
         return userAttributes.get(key);
     }
 
-    /**
-     * 获取目标类
-     */
     public Class<?> getTargetClass() {
         return this.targetClass;
     }
+
 } 

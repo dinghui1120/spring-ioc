@@ -5,6 +5,7 @@ import com.dh.framework.aop.config.DhAopConfig;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -158,14 +159,44 @@ public class DhAdvisedSupport {
     /**
      * 获取目标方法对应的拦截器链
      */
-    public List<Object> getInterceptorsAndDynamicInterceptionAdvice(Method method, Class<?> targetClass) throws  Exception{
+    public List<Object> getInterceptorsAndDynamicInterceptionAdvice(Method method, Class<?> targetClass) throws Exception {
         List<Object> cached = methodCache.get(method);
         if (cached == null) {
             Method m = targetClass.getMethod(method.getName(), method.getParameterTypes());
             cached = methodCache.get(m);
             methodCache.put(method, cached);
         }
+        // 对拦截器链进行排序，使清理拦截器最后执行
+        if (cached != null && !cached.isEmpty()) {
+            cached = optimizeInterceptorChain(cached);
+        }
         return cached;
+    }
+    
+    /**
+     * 优化拦截器链，确保ThreadLocal清理拦截器在最后
+     */
+    private List<Object> optimizeInterceptorChain(List<Object> chain) {
+        if (chain == null || chain.isEmpty()) {
+            return chain;
+        }
+        // 查找清理拦截器
+        int cleanupIndex = -1;
+        for (int i = 0; i < chain.size(); i++) {
+            Object interceptor = chain.get(i);
+            if (interceptor instanceof DhThreadLocalCleanupInterceptor) {
+                cleanupIndex = i;
+                break;
+            }
+        }
+        // 如果找到清理拦截器且不在最后，则调整顺序
+        if (cleanupIndex >= 0 && cleanupIndex < chain.size() - 1) {
+            List<Object> optimizedChain = new ArrayList<>(chain);
+            Object cleanupInterceptor = optimizedChain.remove(cleanupIndex);
+            optimizedChain.add(cleanupInterceptor);
+            return optimizedChain;
+        }
+        return chain;
     }
 
     /**

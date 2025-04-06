@@ -14,7 +14,7 @@ public class DhDefaultListableBeanFactory implements DhBeanFactory {
     public Map<String, DhBeanDefinition> beanDefinitionMap = new HashMap<>();
 
     @Override
-    public Object getBean(Class beanClass) {
+    public Object getBean(Class<?> beanClass) {
         return null;
     }
 

@@ -76,7 +76,7 @@ public class DhApplicationContext implements DhBeanFactory {
     }
 
     @Override
-    public Object getBean(Class beanClass) {
+    public Object getBean(Class<?> beanClass) {
         return getBean(beanClass.getName());
     }
 

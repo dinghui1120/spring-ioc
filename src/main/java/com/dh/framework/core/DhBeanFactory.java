@@ -5,7 +5,7 @@ package com.dh.framework.core;
  */
 public interface DhBeanFactory {
 
-    Object getBean(Class beanClass);
+    Object getBean(Class<?> beanClass);
 
     Object getBean(String beanName);
 

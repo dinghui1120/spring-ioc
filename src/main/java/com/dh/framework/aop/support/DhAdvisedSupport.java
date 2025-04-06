@@ -5,7 +5,6 @@ import com.dh.framework.aop.config.DhAopConfig;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -191,7 +190,7 @@ public class DhAdvisedSupport {
         }
         // 如果找到清理拦截器且不在最后，则调整顺序
         if (cleanupIndex >= 0 && cleanupIndex < chain.size() - 1) {
-            List<Object> optimizedChain = new ArrayList<>(chain);
+            List<Object> optimizedChain = new LinkedList<>(chain);
             Object cleanupInterceptor = optimizedChain.remove(cleanupIndex);
             optimizedChain.add(cleanupInterceptor);
             return optimizedChain;

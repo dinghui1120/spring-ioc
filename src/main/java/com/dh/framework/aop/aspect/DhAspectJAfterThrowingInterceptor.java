@@ -37,7 +37,8 @@ public class DhAspectJAfterThrowingInterceptor extends DhAbstractAspectJAdvice i
             log.info("configThrowType:{}, exType:{}", throwType, targetEx.getClass());
             // 如果指定了异常类型，则只处理该类型的异常
             if (throwType == null || throwType.isAssignableFrom(targetEx.getClass())) {
-                invokeAdviceMethod(mi, null, targetEx);
+                DhJoinPoint jp = new DhSimpleJoinPoint(mi.getThis(), mi.getMethod(), mi.getArguments(), mi.getThis().getClass());
+                invokeAdviceMethod(jp, null, targetEx);
             }
             throw targetEx;
         }
@@ -60,17 +61,10 @@ public class DhAspectJAfterThrowingInterceptor extends DhAbstractAspectJAdvice i
      * @param typeName 异常类型的全限定名
      */
     public void setThrowType(String typeName) {
-        if (typeName != null && !typeName.isEmpty()) {
-            try {
-                throwType = Class.forName(typeName);
-                if (!Throwable.class.isAssignableFrom(throwType)) {
-                    log.error("指定的类型 '" + typeName + "' 不是Throwable的子类");
-                    throwType = null;
-                }
-            } catch (ClassNotFoundException e) {
-                log.error("无法加载指定的异常类型 '" + typeName + "'");
-                throwType = null;
-            }
+        try {
+            throwType = Class.forName(typeName);
+        } catch (ClassNotFoundException e) {
+            log.error("异常类型[{}]不存在", typeName, e);
         }
     }
     

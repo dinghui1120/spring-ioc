@@ -71,7 +71,7 @@ public class DhMethodInvocationProceedingJoinPoint implements DhProceedingJoinPo
      * 获取目标类
      */
     public Class<?> getTargetClass() {
-        return methodInvocation.getThis().getClass();
+        return methodInvocation.getTargetClass();
     }
     
     /**

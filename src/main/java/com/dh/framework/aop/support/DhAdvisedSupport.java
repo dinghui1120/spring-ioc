@@ -146,6 +146,8 @@ public class DhAdvisedSupport {
                 }
             }
             if (!advices.isEmpty()) {
+                // 添加ThreadLocal清理拦截器
+                advices.add(new DhThreadLocalCleanupInterceptor());
                 methodCache.put(method, advices);
             }
         } catch (Exception e) {

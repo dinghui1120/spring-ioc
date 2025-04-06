@@ -10,14 +10,13 @@ import java.util.Map;
 public class JoinPointContext {
 
     /**
-     * 使用ThreadLocal存储每个线程的连接点属性
+     * 连接点属性
      */
     private static final ThreadLocal<Map<String, Object>> ATTRIBUTES_HOLDER = 
             ThreadLocal.withInitial(HashMap::new);
 
     /**
-     * 创建ThreadLocal资源的回收监听器
-     * 在ClassLoader卸载时尝试清理所有ThreadLocal资源
+     * 创建资源回收监听器
      */
     static {
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
@@ -55,7 +54,6 @@ public class JoinPointContext {
      */
     public static void clear() {
         ATTRIBUTES_HOLDER.get().clear();
-        ATTRIBUTES_HOLDER.remove();
     }
 
 } 

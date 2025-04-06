@@ -2,13 +2,11 @@ package com.dh.framework.aop.aspect;
 
 import com.dh.framework.aop.intercept.DhMethodInvocation;
 
-import java.lang.reflect.Method;
-
 /**
- * DhProceedingJoinPoint的专用实现类
- * 封装了DhMethodInvocation，提供更丰富的连接点信息
+ * DhProceedingJoinPoint的具体实现类
+ * 用于环绕通知，提供执行目标方法的能力
  */
-public class DhMethodInvocationProceedingJoinPoint implements DhProceedingJoinPoint {
+public class DhMethodInvocationProceedingJoinPoint extends DhAbstractJoinPoint implements DhProceedingJoinPoint {
 
     private final DhMethodInvocation methodInvocation;
 
@@ -16,21 +14,22 @@ public class DhMethodInvocationProceedingJoinPoint implements DhProceedingJoinPo
      * 缓存参数，支持参数修改
      */
     private Object[] args;
-
+    
     /**
      * 是否已经执行过proceed
      */
     private boolean proceeded = false;
 
-    public DhMethodInvocationProceedingJoinPoint(DhMethodInvocation methodInvocation) {
-        this.methodInvocation = methodInvocation;
-        this.args = methodInvocation.getArguments();
+    public DhMethodInvocationProceedingJoinPoint(DhMethodInvocation mi) {
+        super(mi.getThis(), mi.getMethod(), mi.getArguments(), mi.getTargetClass());
+        this.methodInvocation = mi;
+        this.args = mi.getArguments();
     }
 
     @Override
     public Object proceed() throws Throwable {
         proceeded = true;
-        return methodInvocation.proceed(this.args);
+        return methodInvocation.proceed();
     }
 
     @Override
@@ -42,43 +41,12 @@ public class DhMethodInvocationProceedingJoinPoint implements DhProceedingJoinPo
         return methodInvocation.proceed(this.args);
     }
 
-    @Override
-    public Object getThis() {
-        return methodInvocation.getThis();
-    }
-
+    /**
+     * 重写获取参数方法，使用本地缓存的参数
+     */
     @Override
     public Object[] getArguments() {
         return this.args;
-    }
-
-    @Override
-    public Method getMethod() {
-        return methodInvocation.getMethod();
-    }
-
-    @Override
-    public void setUserAttribute(String key, Object value) {
-        methodInvocation.setUserAttribute(key, value);
-    }
-
-    @Override
-    public Object getUserAttribute(String key) {
-        return methodInvocation.getUserAttribute(key);
-    }
-    
-    /**
-     * 获取目标类
-     */
-    public Class<?> getTargetClass() {
-        return methodInvocation.getTargetClass();
-    }
-    
-    /**
-     * 检查是否已经调用过proceed方法
-     */
-    public boolean hasProceeded() {
-        return proceeded;
     }
     
     /**
@@ -86,6 +54,13 @@ public class DhMethodInvocationProceedingJoinPoint implements DhProceedingJoinPo
      */
     public DhMethodInvocation getMethodInvocation() {
         return methodInvocation;
+    }
+    
+    /**
+     * 检查是否已经调用过proceed方法
+     */
+    public boolean hasProceeded() {
+        return proceeded;
     }
 
 } 

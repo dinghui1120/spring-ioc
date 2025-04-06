@@ -23,7 +23,7 @@ public class DhMethodBeforeAdviceInterceptor extends DhAbstractAspectJAdvice imp
      */
     @Override
     public Object invoke(DhMethodInvocation mi) throws Throwable {
-        jp = new DhSimpleJoinPoint(mi.getThis(), mi.getMethod(), mi.getArguments(), mi.getThis().getClass());
+        jp = new DhSimpleJoinPoint(mi.getThis(), mi.getMethod(), mi.getArguments(), mi.getTargetClass());
         before();
         return mi.proceed();
     }

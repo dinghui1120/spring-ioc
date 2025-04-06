@@ -1,4 +1,4 @@
-package com.dh.framework.aop.aspect;
+package com.dh.framework.aop.aspect.joinpoint;
 
 /**
  * 用于环绕通知的连接点接口

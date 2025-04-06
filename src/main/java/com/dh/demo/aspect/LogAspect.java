@@ -1,7 +1,7 @@
 package com.dh.demo.aspect;
 
-import com.dh.framework.aop.aspect.DhJoinPoint;
-import com.dh.framework.aop.aspect.DhProceedingJoinPoint;
+import com.dh.framework.aop.aspect.joinpoint.DhJoinPoint;
+import com.dh.framework.aop.aspect.joinpoint.DhProceedingJoinPoint;
 import lombok.extern.slf4j.Slf4j;
 import java.lang.reflect.Method;
 

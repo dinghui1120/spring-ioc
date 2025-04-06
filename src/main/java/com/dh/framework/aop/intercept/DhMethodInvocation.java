@@ -1,7 +1,7 @@
 package com.dh.framework.aop.intercept;
 
 
-import com.dh.framework.aop.aspect.DhAbstractJoinPoint;
+import com.dh.framework.aop.aspect.joinpoint.DhAbstractJoinPoint;
 
 import java.lang.reflect.Method;
 import java.util.List;

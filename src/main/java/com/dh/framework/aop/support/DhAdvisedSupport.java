@@ -173,7 +173,7 @@ public class DhAdvisedSupport {
     }
     
     /**
-     * 优化拦截器链，确保ThreadLocal清理拦截器在最后
+     * 优化拦截器链
      */
     private List<Object> optimizeInterceptorChain(List<Object> chain) {
         if (chain == null || chain.isEmpty()) {
@@ -188,11 +188,11 @@ public class DhAdvisedSupport {
                 break;
             }
         }
-        // 如果找到清理拦截器且不在最后，则调整顺序
-        if (cleanupIndex >= 0 && cleanupIndex < chain.size() - 1) {
+        // 如果找到清理拦截器且不在第一个位置，则调整顺序
+        if (cleanupIndex > 0) {
             List<Object> optimizedChain = new LinkedList<>(chain);
             Object cleanupInterceptor = optimizedChain.remove(cleanupIndex);
-            optimizedChain.add(cleanupInterceptor);
+            optimizedChain.add(0, cleanupInterceptor);
             return optimizedChain;
         }
         return chain;

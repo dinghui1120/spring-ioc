@@ -34,7 +34,7 @@ public class DhCglibAopProxy implements DhAopProxy, MethodInterceptor {
         List<Object> chain = advised.getInterceptorsAndDynamicInterceptionAdvice(method, advised.getTargetClass());
         // 如果没有拦截器，直接调用目标方法
         if (chain == null || chain.isEmpty()) {
-            return methodProxy.invoke(advised.getTarget(), args);
+            return methodProxy.invokeSuper(proxy, args);
         }
         // 创建方法调用对象，并执行拦截器链
         DhMethodInvocation mi = new DhMethodInvocation(proxy, advised.getTarget(), method, args,

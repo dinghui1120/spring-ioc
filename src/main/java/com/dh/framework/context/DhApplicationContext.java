@@ -219,4 +219,8 @@ public class DhApplicationContext implements DhBeanFactory {
         return new DhAdvisedSupport(config);
     }
 
+    public Properties getConfig() {
+        return this.reader.getConfig();
+    }
+
 }

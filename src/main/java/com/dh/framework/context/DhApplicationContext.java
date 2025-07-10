@@ -58,7 +58,7 @@ public class DhApplicationContext implements DhBeanFactory {
             registry.doRegisterBeanDefinition(beanDefinitions);
             //4、加载非延时加载的所有Bean
             doLoadInstance();
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -208,14 +208,14 @@ public class DhApplicationContext implements DhBeanFactory {
      */
     private DhAdvisedSupport instantiationAopConfig() {
         DhAopConfig config = new DhAopConfig();
-        config.setPointCut(reader.getConfig().getProperty("pointCut"));
         config.setAspectClass(reader.getConfig().getProperty("aspectClass"));
+        config.setPointCut(reader.getConfig().getProperty("pointCut"));
         config.setAspectBefore(reader.getConfig().getProperty("aspectBefore"));
+        config.setAspectAfter(reader.getConfig().getProperty("aspectAfter"));
         config.setAspectAfterReturn(reader.getConfig().getProperty("aspectAfterReturn"));
         config.setAspectAfterThrow(reader.getConfig().getProperty("aspectAfterThrow"));
-        config.setAspectAfterThrowingType(reader.getConfig().getProperty("aspectAfterThrowingType"));
         config.setAspectAround(reader.getConfig().getProperty("aspectAround"));
-        config.setAspectAfter(reader.getConfig().getProperty("aspectAfter"));
+        config.setAspectAfterThrowingType(reader.getConfig().getProperty("aspectAfterThrowingType"));
         return new DhAdvisedSupport(config);
     }
 

@@ -12,8 +12,7 @@ public class JoinPointContext {
     /**
      * 连接点属性
      */
-    private static final ThreadLocal<Map<String, Object>> ATTRIBUTES_HOLDER = 
-            ThreadLocal.withInitial(HashMap::new);
+    private static final ThreadLocal<Map<String, Object>> ATTRIBUTES_HOLDER = ThreadLocal.withInitial(HashMap::new);
 
     /**
      * 创建资源回收监听器

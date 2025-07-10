@@ -51,7 +51,7 @@ public class DhAdvisedSupport {
      * 解析配置文件，构建拦截器链
      */
     public void parse() {
-        //把Spring的Expression变成Java能够识别的正则表达式
+        //转成Java能够识别的正则表达式
         String pointCut = config.getPointCut()
                 .replaceAll("\\.", "\\\\.")
                 .replaceAll("\\\\.\\*", ".*")

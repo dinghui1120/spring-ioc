@@ -153,9 +153,11 @@ public class DhApplicationContext implements DhBeanFactory {
             DhAdvisedSupport config = instantiationAopConfig();
             config.setTargetClass(clazz);
             config.setTarget(instance);
-            config.parse();
-            //如果满足条件，直接返回Proxy对象
+            //初始化类匹配正则表达式
+            config.initializeClassPattern();
             if (config.pointCutMatch()) {
+                //解析方法并构建拦截器链
+                config.parse();
                 instance = proxyFactory.createAopProxy(config).getProxy();
             }
             singletonFactories.put(beanName, instance);

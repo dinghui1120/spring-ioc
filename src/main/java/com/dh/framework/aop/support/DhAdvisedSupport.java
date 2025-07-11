@@ -39,6 +39,11 @@ public class DhAdvisedSupport {
     private Pattern pointCutClassPattern;
 
     /**
+     * 转换后的切点正则表达式
+     */
+    private String processedPointCut;
+
+    /**
      * 方法对应的拦截器链
      */
     private Map<Method, List<Object>> methodCache;
@@ -48,35 +53,39 @@ public class DhAdvisedSupport {
     }
 
     /**
-     * 解析配置文件，构建拦截器链
+     * 初始化类匹配正则表达式
      */
-    public void parse() {
+    public void initializeClassPattern() {
         //转成Java能够识别的正则表达式
-        String pointCut = config.getPointCut()
+        processedPointCut = config.getPointCut()
                 .replaceAll("\\.", "\\\\.")
                 .replaceAll("\\\\.\\*", ".*")
                 .replaceAll("\\(", "\\\\(")
                 .replaceAll("\\)", "\\\\)");
-
-        //匹配Class的正则
         //public .* com\.dh\.demo\.service\..*Service
-        String pointCutForClassRegex = pointCut.substring(0, pointCut.lastIndexOf("\\(") - 4);
+        String classRegex = processedPointCut.substring(0, processedPointCut.lastIndexOf("\\(") - 4);
         //class com\.dh\.demo\.service\..*Service
-        pointCutClassPattern = Pattern.compile("class " + pointCutForClassRegex.substring(pointCutForClassRegex.lastIndexOf(" ") + 1));
+        pointCutClassPattern = Pattern.compile("class " + classRegex.substring(classRegex.lastIndexOf(" ") + 1));
+    }
 
+    /**
+     * 解析方法并构建拦截器链
+     */
+    public void parse() {
+        if (processedPointCut == null) {
+            throw new IllegalStateException("切点表达式不能为空");
+        }
         methodCache = new HashMap<>();
-        //匹配方法的正则
-        Pattern pointCutPattern = Pattern.compile(pointCut);
+        Pattern pointCutPattern = Pattern.compile(processedPointCut);
         try {
             Class<?> aspectClass = Class.forName(config.getAspectClass());
             Map<String, Method> aspectMethods = new HashMap<>();
             for (Method method : aspectClass.getMethods()) {
                 aspectMethods.put(method.getName(), method);
             }
-
             for (Method method : targetClass.getMethods()) {
                 //public java.lang.String com.dh.demo.service.impl.QueryService.query(java.lang.String)
-                //public java.lang.String com.dh.demo.service.impl.ModifyService.remove(java.lang.Integer) throws java.lang.Exception
+                //public java.lang.String com.dh.demo.service.impl.ModifyService.remove(java.lang.Integer) throws Exception
                 String methodString = method.toString();
                 if (methodString.contains("throws")) {
                     methodString = methodString.substring(0, methodString.lastIndexOf("throws")).trim();
@@ -92,7 +101,7 @@ public class DhAdvisedSupport {
     }
 
     /**
-     * 为匹配的方法构建拦截器链
+     * 构建拦截器链
      */
     private void buildAdviceChain(Method method, Class<?> aspectClass, Map<String, Method> aspectMethods) {
         List<Object> advices = new LinkedList<>();
@@ -122,7 +131,6 @@ public class DhAdvisedSupport {
                     advices.add(new DhAfterReturningAdviceInterceptor(aspectInstance, aspectMethod));
                 }
             }
-
             // 添加前置通知
             String beforeMethod = config.getAspectBefore();
             if (isValidMethod(beforeMethod)) {
@@ -151,7 +159,7 @@ public class DhAdvisedSupport {
                 methodCache.put(method, advices);
             }
         } catch (Exception e) {
-            log.error("创建通知实例失败: {}", e.getMessage());
+            log.error("构建拦截器链失败:", e);
         }
     }
 

@@ -19,12 +19,10 @@ public class DhThreadLocalCleanupInterceptor implements DhMethodInterceptor {
         } finally {
             // 只在最外层调用时清理，避免嵌套调用问题
             if (mi.isRootInvocation()) {
-                log.debug("正在清理ThreadLocal资源，方法: {}, 属性: {}", 
-                          mi.getMethod().getName(), 
-                          JoinPointContext.getAttributes());
+                log.info("正在清理ThreadLocal资源，方法: {}, 属性: {}", mi.getMethod().getName(), JoinPointContext.getAttributes());
                 JoinPointContext.clear();
             } else {
-                log.debug("内部调用，跳过ThreadLocal资源清理，方法: {}", mi.getMethod().getName());
+                log.info("内部调用，跳过ThreadLocal资源清理，方法: {}", mi.getMethod().getName());
             }
         }
     }

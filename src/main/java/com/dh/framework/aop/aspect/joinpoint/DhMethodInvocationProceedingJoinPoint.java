@@ -8,6 +8,10 @@ import com.dh.framework.aop.intercept.DhMethodInvocation;
  */
 public class DhMethodInvocationProceedingJoinPoint extends DhAbstractJoinPoint implements DhProceedingJoinPoint {
 
+    /**
+     * 原始调用对象
+     * 通过它来控制目标方法的执行
+     */
     private final DhMethodInvocation methodInvocation;
 
     /**

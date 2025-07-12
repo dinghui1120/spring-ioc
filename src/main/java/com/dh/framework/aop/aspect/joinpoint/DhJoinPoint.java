@@ -19,7 +19,7 @@ public interface DhJoinPoint {
     Object[] getArguments();
 
     /**
-     * 获取被调用的方法
+     * 获取目标方法
      */
     Method getMethod();
 

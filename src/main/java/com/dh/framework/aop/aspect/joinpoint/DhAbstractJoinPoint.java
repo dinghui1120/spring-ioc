@@ -37,7 +37,7 @@ public abstract class DhAbstractJoinPoint implements DhJoinPoint {
     }
 
     @Override
-    public Object getThis() {
+    public Object getTarget() {
         return this.target;
     }
 

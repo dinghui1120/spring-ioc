@@ -9,9 +9,9 @@ import java.lang.reflect.Method;
 public interface DhJoinPoint {
 
     /**
-     * 获取代理对象
+     * 获取目标对象
      */
-    Object getThis();
+    Object getTarget();
 
     /**
      * 获取方法参数

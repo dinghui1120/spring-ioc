@@ -38,10 +38,10 @@ public class DhMethodInvocation extends DhAbstractJoinPoint {
     }
     
     protected DhMethodInvocation(Object proxy, Object target, Method method, Object[] arguments,
-                Class<?> targetClass, List<Object> interceptorsAndDynamicMethodMatchers, boolean isRootInvocation) {
+                Class<?> targetClass, List<Object> interceptorChain, boolean isRootInvocation) {
         super(target, method, arguments, targetClass);
         this.proxy = proxy;
-        this.interceptorChain = interceptorsAndDynamicMethodMatchers;
+        this.interceptorChain = interceptorChain;
         this.isRootInvocation = isRootInvocation;
     }
 

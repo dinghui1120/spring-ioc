@@ -21,7 +21,7 @@ public class DhMethodInvocationProceedingJoinPoint extends DhAbstractJoinPoint i
     private boolean proceeded = false;
 
     public DhMethodInvocationProceedingJoinPoint(DhMethodInvocation mi) {
-        super(mi.getThis(), mi.getMethod(), mi.getArguments(), mi.getTargetClass());
+        super(mi.getTarget(), mi.getMethod(), mi.getArguments(), mi.getTargetClass());
         this.methodInvocation = mi;
         this.args = mi.getArguments();
     }

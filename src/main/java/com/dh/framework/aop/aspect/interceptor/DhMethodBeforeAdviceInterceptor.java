@@ -15,8 +15,6 @@ import java.lang.reflect.Method;
  */
 public class DhMethodBeforeAdviceInterceptor extends DhAbstractAspectJAdvice implements DhMethodInterceptor {
 
-    private DhJoinPoint jp;
-
     public DhMethodBeforeAdviceInterceptor(Object aspect, Method adviceMethod) {
         super(aspect, adviceMethod);
     }
@@ -26,12 +24,12 @@ public class DhMethodBeforeAdviceInterceptor extends DhAbstractAspectJAdvice imp
      */
     @Override
     public Object invoke(DhMethodInvocation mi) throws Throwable {
-        jp = new DhSimpleJoinPoint(mi.getTarget(), mi.getMethod(), mi.getArguments(), mi.getTargetClass());
-        before();
+        DhJoinPoint jp = new DhSimpleJoinPoint(mi.getTarget(), mi.getMethod(), mi.getArguments(), mi.getTargetClass());
+        before(jp);
         return mi.proceed();
     }
 
-    public void before() throws Throwable{
+    public void before(DhJoinPoint jp) throws Throwable{
         invokeAdviceMethod(jp,null,null);
     }
 

@@ -19,7 +19,7 @@ public class DhMethodInvocation extends DhAbstractJoinPoint {
     /**
      * 拦截器链
      */
-    protected final List<?> interceptorsAndDynamicMethodMatchers;
+    protected final List<?> interceptorChain;
 
     /**
      * 当前执行到的拦截器索引
@@ -41,7 +41,7 @@ public class DhMethodInvocation extends DhAbstractJoinPoint {
                 Class<?> targetClass, List<Object> interceptorsAndDynamicMethodMatchers, boolean isRootInvocation) {
         super(target, method, arguments, targetClass);
         this.proxy = proxy;
-        this.interceptorsAndDynamicMethodMatchers = interceptorsAndDynamicMethodMatchers;
+        this.interceptorChain = interceptorsAndDynamicMethodMatchers;
         this.isRootInvocation = isRootInvocation;
     }
 
@@ -49,13 +49,12 @@ public class DhMethodInvocation extends DhAbstractJoinPoint {
      * 执行方法调用
      */
     public Object proceed() throws Throwable {
-        if (currentInterceptorIndex == interceptorsAndDynamicMethodMatchers.size() - 1) {
-            // 执行service中的方法
+        if (currentInterceptorIndex == interceptorChain.size() - 1) {
             return method.invoke(target, arguments);
         }
-        Object interceptorOrInterceptionAdvice = interceptorsAndDynamicMethodMatchers.get(++currentInterceptorIndex);
-        if (interceptorOrInterceptionAdvice instanceof DhMethodInterceptor) {
-            DhMethodInterceptor mi = (DhMethodInterceptor) interceptorOrInterceptionAdvice;
+        Object interceptor = interceptorChain.get(++currentInterceptorIndex);
+        if (interceptor instanceof DhMethodInterceptor) {
+            DhMethodInterceptor mi = (DhMethodInterceptor) interceptor;
             return mi.invoke(this);
         } else {
             return proceed();

@@ -25,13 +25,12 @@ public class DhCglibAopProxy implements DhAopProxy, MethodInterceptor {
     }
 
     /**
-     * CGLIB MethodInterceptor接口方法
      * 拦截代理对象的方法调用
      */
     @Override
     public Object intercept(Object proxy, Method method, Object[] args, MethodProxy methodProxy) throws Throwable {
         // 获取方法对应的拦截器链
-        List<Object> chain = advised.getInterceptorsAndDynamicInterceptionAdvice(method, advised.getTargetClass());
+        List<Object> chain = advised.getInterceptorChain(method, advised.getTargetClass());
         // 如果没有拦截器，直接调用目标方法
         if (chain == null || chain.isEmpty()) {
             return methodProxy.invokeSuper(proxy, args);

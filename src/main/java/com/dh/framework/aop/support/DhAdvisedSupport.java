@@ -166,7 +166,7 @@ public class DhAdvisedSupport {
     /**
      * 获取目标方法对应的拦截器链
      */
-    public List<Object> getInterceptorsAndDynamicInterceptionAdvice(Method method, Class<?> targetClass) throws Exception {
+    public List<Object> getInterceptorChain(Method method, Class<?> targetClass) throws Exception {
         List<Object> cached = methodCache.get(method);
         if (cached == null) {
             Method m = targetClass.getMethod(method.getName(), method.getParameterTypes());

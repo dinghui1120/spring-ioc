@@ -22,12 +22,11 @@ public class DhJdkDynamicAopProxy implements DhAopProxy, InvocationHandler {
     }
 
     /**
-     * 实现InvocationHandler接口的invoke方法
      * 在这里织入切面逻辑
      */
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-        List<Object> chain = advised.getInterceptorsAndDynamicInterceptionAdvice(method, advised.getTargetClass());
+        List<Object> chain = advised.getInterceptorChain(method, advised.getTargetClass());
         if (chain == null || chain.isEmpty()) {
             return method.invoke(advised.getTarget(), args);
         }

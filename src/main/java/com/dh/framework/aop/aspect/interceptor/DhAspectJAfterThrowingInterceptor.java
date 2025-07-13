@@ -50,6 +50,7 @@ public class DhAspectJAfterThrowingInterceptor extends DhAbstractAspectJAdvice i
     /**
      * 获取原始异常
      * 如果是InvocationTargetException，则获取其目标异常
+     * 反射调用时，真正的异常会被包装在 InvocationTargetException 中
      */
     private Throwable unwrapThrowable(Throwable ex) {
         if (ex instanceof InvocationTargetException) {

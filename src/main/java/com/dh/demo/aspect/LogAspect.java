@@ -13,26 +13,26 @@ public class LogAspect {
 
     public void before(DhJoinPoint joinPoint) {
         joinPoint.setUserAttribute("startTime_" + joinPoint.getMethod().getName(), System.currentTimeMillis());
-        log.info("Invoke Before Method,methodName:{}", joinPoint.getMethod().getName());
+        log.info("前置通知,methodName:{}", joinPoint.getMethod().getName());
     }
 
     public void afterReturning(DhJoinPoint joinPoint, Object result) {
         long startTime = (Long) joinPoint.getUserAttribute("startTime_" + joinPoint.getMethod().getName());
         long endTime = System.currentTimeMillis();
-        log.info("Invoke After Returning Method,\n methodName:{},\n result:{},\n cost time:{}",
-                joinPoint.getMethod().getName(), result, (endTime - startTime) + "ms");
+        log.info("返回值通知,\n methodName:{},\n result:{},\n cost time:{}", joinPoint.getMethod().getName(), result,
+                (endTime - startTime) + "ms");
     }
 
     public void afterThrowing(DhJoinPoint joinPoint, Throwable ex) {
         long startTime = (Long) joinPoint.getUserAttribute("startTime_" + joinPoint.getMethod().getName());
-        log.info("Invoke After Throwing Method,startTime:{}", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(startTime));
-        log.info("Invoke After Throwing Method,methodName:{},e:{}", joinPoint.getMethod().getName(), ex);
+        log.info("异常通知,startTime:{}", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(startTime));
+        log.info("异常通知,methodName:{},e:{}", joinPoint.getMethod().getName(), ex);
     }
 
     public void after(DhJoinPoint joinPoint) {
         long startTime = (Long) joinPoint.getUserAttribute("startTime_" + joinPoint.getMethod().getName());
         log.info("后置通知,startTime:{}", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(startTime));
-        log.info("后置通知 - 方法执行: {}", joinPoint.getMethod().getName());
+        log.info("后置通知,methodName:{}", joinPoint.getMethod().getName());
     }
 
 

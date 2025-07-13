@@ -4,7 +4,7 @@ package com.dh.framework.aop.aspect.joinpoint;
  * 用于环绕通知的连接点接口
  * 与JoinPoint不同，ProceedingJoinPoint提供了proceed方法来控制是否执行目标方法
  */
-public interface DhProceedingJoinPoint extends DhJoinPoint {
+public interface DhProceedingJoinPoint {
     
     /**
      * 继续执行连接点的方法调用

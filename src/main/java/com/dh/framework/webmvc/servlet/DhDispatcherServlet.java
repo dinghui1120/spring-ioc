@@ -112,8 +112,11 @@ public class DhDispatcherServlet extends HttpServlet {
         }
         for (DhViewResolver viewResolver : viewResolvers) {
             DhView view = viewResolver.resolveViewName(mv.getViewName());
-            view.render(mv.getModel(), req, resp);
-            return;
+            if (view != null) {
+                view.render(mv.getModel(), req, resp);
+                log.info("View resolved successfully, rendering...");
+                return;
+            }
         }
     }
 

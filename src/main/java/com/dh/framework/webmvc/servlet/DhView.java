@@ -39,6 +39,7 @@ public class DhView {
             sb.append(line);
         }
         resp.setCharacterEncoding("utf-8");
+        resp.setContentType("text/html;charset=UTF-8");
         resp.getWriter().write(sb.toString());
     }
 
